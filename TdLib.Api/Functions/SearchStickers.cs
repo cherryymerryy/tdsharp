@@ -35,7 +35,7 @@ namespace TdLib
             public StickerType StickerType { get; set; }
 
             /// <summary>
-            /// Space-separated list of emoji to search for; must be non-empty
+            /// Space-separated list of emojis to search for; must be non-empty
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("emojis")]

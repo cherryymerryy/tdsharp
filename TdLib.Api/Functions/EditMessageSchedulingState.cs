@@ -35,7 +35,7 @@ namespace TdLib
             public long ChatId { get; set; }
 
             /// <summary>
-            /// Identifier of the message
+            /// Identifier of the message. Use messageProperties.can_edit_scheduling_state to check whether the message is suitable
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("message_id")]

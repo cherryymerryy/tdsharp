@@ -89,6 +89,13 @@ namespace TdLib
             public long[] MemberUserIds { get; set; }
 
             /// <summary>
+            /// Information about subscription plan that must be paid by the user to use the link; may be null if the link doesn't require subscription
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("subscription_info")]
+            public ChatInviteLinkSubscriptionInfo SubscriptionInfo { get; set; }
+
+            /// <summary>
             /// True, if the link only creates join request
             /// </summary>
             [JsonConverter(typeof(Converter))]

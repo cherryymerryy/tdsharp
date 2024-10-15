@@ -62,6 +62,13 @@ namespace TdLib
             public MessageSchedulingState SchedulingState { get; set; }
 
             /// <summary>
+            /// Identifier of the effect to apply to the message; pass 0 if none; applicable only to sendMessage and sendMessageAlbum in private chats
+            /// </summary>
+            [JsonConverter(typeof(Converter.Int64))]
+            [JsonProperty("effect_id")]
+            public long EffectId { get; set; }
+
+            /// <summary>
             /// Non-persistent identifier, which will be returned back in messageSendingStatePending object and can be used to match sent messages and corresponding updateNewMessage updates
             /// </summary>
             [JsonConverter(typeof(Converter))]

@@ -48,11 +48,25 @@ namespace TdLib
             public int HeaderBackgroundColor { get; set; }
 
             /// <summary>
+            /// A color of the bottom bar background in the RGB24 format
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("bottom_bar_background_color")]
+            public int BottomBarBackgroundColor { get; set; }
+
+            /// <summary>
             /// A color of the section background in the RGB24 format
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("section_background_color")]
             public int SectionBackgroundColor { get; set; }
+
+            /// <summary>
+            /// A color of the section separator in the RGB24 format
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("section_separator_color")]
+            public int SectionSeparatorColor { get; set; }
 
             /// <summary>
             /// A color of text in the RGB24 format

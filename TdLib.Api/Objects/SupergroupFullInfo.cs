@@ -90,6 +90,13 @@ namespace TdLib
             public double? SlowModeDelayExpiresIn { get; set; }
 
             /// <summary>
+            /// True, if paid reaction can be enabled in the channel chat; for channels only
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("can_enable_paid_reaction")]
+            public bool CanEnablePaidReaction { get; set; }
+
+            /// <summary>
             /// True, if members of the chat can be retrieved via getSupergroupMembers or searchChatMembers
             /// </summary>
             [JsonConverter(typeof(Converter))]
@@ -139,6 +146,13 @@ namespace TdLib
             public bool CanGetRevenueStatistics { get; set; }
 
             /// <summary>
+            /// True, if the supergroup or channel Telegram Star revenue statistics are available
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("can_get_star_revenue_statistics")]
+            public bool CanGetStarRevenueStatistics { get; set; }
+
+            /// <summary>
             /// True, if aggressive anti-spam checks can be enabled or disabled in the supergroup
             /// </summary>
             [JsonConverter(typeof(Converter))]
@@ -166,6 +180,13 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("has_aggressive_anti_spam_enabled")]
             public bool HasAggressiveAntiSpamEnabled { get; set; }
+
+            /// <summary>
+            /// True, if paid media can be sent and forwarded to the channel chat; for channels only
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("has_paid_media_allowed")]
+            public bool HasPaidMediaAllowed { get; set; }
 
             /// <summary>
             /// True, if the supergroup or channel has pinned stories

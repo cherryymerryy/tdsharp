@@ -63,7 +63,7 @@ namespace TdLib
             public ThemeParameters Theme { get; set; }
 
             /// <summary>
-            /// Short name of the application; 0-64 English letters, digits, and underscores
+            /// Short name of the current application; 0-64 English letters, digits, and underscores
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("application_name")]

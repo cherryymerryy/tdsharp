@@ -145,6 +145,13 @@ namespace TdLib
             public PremiumPaymentOption[] PremiumGiftOptions { get; set; }
 
             /// <summary>
+            /// Number of gifts saved to profile by the user
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("gift_count")]
+            public int GiftCount { get; set; }
+
+            /// <summary>
             /// Number of group chats where both the other user and the current user are a member; 0 for the current user
             /// </summary>
             [JsonConverter(typeof(Converter))]

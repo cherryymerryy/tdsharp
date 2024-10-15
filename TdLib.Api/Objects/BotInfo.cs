@@ -68,6 +68,13 @@ namespace TdLib
             public BotCommand[] Commands { get; set; }
 
             /// <summary>
+            /// The HTTP link to the privacy policy of the bot. If empty, then /privacy command must be used if supported by the bot. If the command isn't supported, then https://telegram.org/privacy-tpa must be opened
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("privacy_policy_url")]
+            public string PrivacyPolicyUrl { get; set; }
+
+            /// <summary>
             /// Default administrator rights for adding the bot to basic group and supergroup chats; may be null
             /// </summary>
             [JsonConverter(typeof(Converter))]
@@ -80,6 +87,13 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("default_channel_administrator_rights")]
             public ChatAdministratorRights DefaultChannelAdministratorRights { get; set; }
+
+            /// <summary>
+            /// True, if the bot has media previews
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("has_media_previews")]
+            public bool HasMediaPreviews { get; set; }
 
             /// <summary>
             /// The internal link, which can be used to edit bot commands; may be null

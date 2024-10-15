@@ -36,11 +36,24 @@ namespace TdLib
                 public Video Video { get; set; }
 
                 /// <summary>
+                /// Alternative qualities of the video
+                /// </summary>
+                [JsonProperty("alternative_videos", ItemConverterType = typeof(Converter))]
+                public AlternativeVideo[] AlternativeVideos { get; set; }
+
+                /// <summary>
                 /// Video caption
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("caption")]
                 public FormattedText Caption { get; set; }
+
+                /// <summary>
+                /// True, if the caption must be shown above the video; otherwise, the caption must be shown below the video
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("show_caption_above_media")]
+                public bool ShowCaptionAboveMedia { get; set; }
 
                 /// <summary>
                 /// True, if the video preview must be covered by a spoiler animation

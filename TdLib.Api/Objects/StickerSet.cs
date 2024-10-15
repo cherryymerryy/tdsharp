@@ -123,7 +123,7 @@ namespace TdLib
             public Sticker[] Stickers { get; set; }
 
             /// <summary>
-            /// A list of emoji corresponding to the stickers in the same order. The list is only for informational purposes, because a sticker is always sent with a fixed emoji from the corresponding Sticker object
+            /// A list of emojis corresponding to the stickers in the same order. The list is only for informational purposes, because a sticker is always sent with a fixed emoji from the corresponding Sticker object
             /// </summary>
             [JsonProperty("emojis", ItemConverterType = typeof(Converter))]
             public Emojis[] Emojis { get; set; }
