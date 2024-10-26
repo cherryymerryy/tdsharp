@@ -272,9 +272,6 @@ searchChats query:string limit:int32 = Chats;
 //@description Searches for the specified query in the title and username of already known chats via request to the server. Returns chats in the order seen in the main chat list @query Query to search for @limit The maximum number of chats to be returned
 searchChatsOnServer query:string limit:int32 = Chats;
 
-//@description Returns a list of users and location-based supergroups nearby. The method was disabled and returns an empty list of chats now @location Current user location
-searchChatsNearby location:location = ChatsNearby;
-
 //@description Returns a list of channel chats recommended to the current user
 getRecommendedChats = Chats;
 
@@ -661,7 +658,8 @@ sendInlineQueryResultMessage chat_id:int53 message_thread_id:int53 reply_to:Inpu
 //@from_chat_id Identifier of the chat from which to forward messages
 //@message_ids Identifiers of the messages to forward. Message identifiers must be in a strictly increasing order. At most 100 messages can be forwarded simultaneously. A message can be forwarded only if messageProperties.can_be_forwarded
 //@options Options to be used to send the messages; pass null to use default options
-//@send_copy Pass true to copy content of the messages without reference to the original sender. Always true if the messages are forwarded to a secret chat or are local
+//@send_copy Pass true to copy content of the messages without reference to the original sender. Always true if the messages are forwarded to a secret chat or are local.
+//-Use messageProperties.can_be_saved and messageProperties.can_be_copied_to_secret_chat to check whether the message is suitable
 //@remove_caption Pass true to remove media captions of message copies. Ignored if send_copy is false
 forwardMessages chat_id:int53 message_thread_id:int53 from_chat_id:int53 message_ids:vector<int53> options:messageSendOptions send_copy:Bool remove_caption:Bool = Messages;
 
@@ -1050,7 +1048,7 @@ togglePaidMessageReactionIsAnonymous chat_id:int53 message_id:int53 is_anonymous
 //@description Sets reactions on a message; for bots only
 //@chat_id Identifier of the chat to which the message belongs
 //@message_id Identifier of the message
-//@reaction_types Types of the reaction to set
+//@reaction_types Types of the reaction to set; pass an empty list to remove the reactions
 //@is_big Pass true if the reactions are added with a big animation
 setMessageReactions chat_id:int53 message_id:int53 reaction_types:vector<ReactionType> is_big:Bool = Ok;
 
@@ -2455,8 +2453,8 @@ getStickerSet set_id:int64 = StickerSet;
 //@description Returns name of a sticker set by its identifier @set_id Identifier of the sticker set
 getStickerSetName set_id:int64 = Text;
 
-//@description Searches for a sticker set by its name @name Name of the sticker set
-searchStickerSet name:string = StickerSet;
+//@description Searches for a sticker set by its name @name Name of the sticker set @ignore_cache Pass true to ignore local cache of sticker sets and always send a network request
+searchStickerSet name:string ignore_cache:Bool = StickerSet;
 
 //@description Searches for installed sticker sets by looking for specified query in their title and name @sticker_type Type of the sticker sets to search for @query Query to search for @limit The maximum number of sticker sets to return
 searchInstalledStickerSets sticker_type:StickerType query:string limit:int32 = StickerSets;
@@ -2614,9 +2612,6 @@ setPersonalChat chat_id:int53 = Ok;
 
 //@description Changes the emoji status of the current user; for Telegram Premium users only @emoji_status New emoji status; pass null to switch to the default badge
 setEmojiStatus emoji_status:emojiStatus = Ok;
-
-//@description Changes the location of the current user. Needs to be called if getOption("is_location_visible") is true and location changes for more than 1 kilometer. Must not be called if the user has a business location @location The new location of the user
-setLocation location:location = Ok;
 
 //@description Toggles whether the current user has sponsored messages enabled. The setting has no effect for users without Telegram Premium for which sponsored messages are always enabled
 //@has_sponsored_messages_enabled Pass true to enable sponsored messages for the current user; false to disable them
