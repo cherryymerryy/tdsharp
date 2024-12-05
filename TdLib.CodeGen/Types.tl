@@ -1,4 +1,4 @@
-double ? = Double;
+﻿double ? = Double;
 string ? = String;
 
 int32 = Int32;
@@ -356,8 +356,11 @@ stickerFullTypeMask mask_position:maskPosition = StickerFullType;
 stickerFullTypeCustomEmoji custom_emoji_id:int64 needs_repainting:Bool = StickerFullType;
 
 
-//@description Represents a closed vector path. The path begins at the end point of the last command @commands List of vector path commands
+//@description Represents a closed vector path. The path begins at the end point of the last command. The coordinate system origin is in the upper-left corner @commands List of vector path commands
 closedVectorPath commands:vector<VectorPathCommand> = ClosedVectorPath;
+
+//@description Represents outline of an image @paths The list of closed vector paths
+outline paths:vector<closedVectorPath> = Outline;
 
 
 //@description Describes one answer option of a poll
@@ -426,10 +429,9 @@ photo has_stickers:Bool minithumbnail:minithumbnail sizes:vector<photoSize> = Ph
 //@emoji Emoji corresponding to the sticker
 //@format Sticker format
 //@full_type Sticker's full type
-//@outline Sticker's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner
 //@thumbnail Sticker thumbnail in WEBP or JPEG format; may be null
 //@sticker File containing the sticker
-sticker id:int64 set_id:int64 width:int32 height:int32 emoji:string format:StickerFormat full_type:StickerFullType outline:vector<closedVectorPath> thumbnail:thumbnail sticker:file = Sticker;
+sticker id:int64 set_id:int64 width:int32 height:int32 emoji:string format:StickerFormat full_type:StickerFullType thumbnail:thumbnail sticker:file = Sticker;
 
 //@description Describes a video file
 //@duration Duration of the video, in seconds; as defined by the sender
@@ -525,7 +527,7 @@ webApp short_name:string title:string description:string photo:photo animation:a
 poll id:int64 question:formattedText options:vector<pollOption> total_voter_count:int32 recent_voter_ids:vector<MessageSender> is_anonymous:Bool type:PollType open_period:int32 close_date:int32 is_closed:Bool = Poll;
 
 
-//@description Describes an alternative reencoded quality of a video file
+//@description Describes an alternative re-encoded quality of a video file
 //@width Video width
 //@height Video height
 //@codec Codec used for video file encoding, for example, "h264", "h265", or "av1"
@@ -807,28 +809,107 @@ chatPermissions can_send_basic_messages:Bool can_send_audios:Bool can_send_docum
 chatAdministratorRights can_manage_chat:Bool can_change_info:Bool can_post_messages:Bool can_edit_messages:Bool can_delete_messages:Bool can_invite_users:Bool can_restrict_members:Bool can_pin_messages:Bool can_manage_topics:Bool can_promote_members:Bool can_manage_video_chats:Bool can_post_stories:Bool can_edit_stories:Bool can_delete_stories:Bool is_anonymous:Bool = ChatAdministratorRights;
 
 
+//@description Describes a possibly non-integer amount of Telegram Stars
+//@star_count The integer amount of Telegram Stars rounded to 0
+//@nanostar_count The number of 1/1000000000 shares of Telegram Stars; from -999999999 to 999999999
+starAmount star_count:int53 nanostar_count:int32 = StarAmount;
+
+
+//@class StarSubscriptionType @description Describes type of subscription paid in Telegram Stars
+
+//@description Describes a subscription to a channel chat
+//@can_reuse True, if the subscription is active and the user can use the method reuseStarSubscription to join the subscribed chat again
+//@invite_link The invite link that can be used to renew the subscription if it has been expired; may be empty, if the link isn't available anymore
+starSubscriptionTypeChannel can_reuse:Bool invite_link:string = StarSubscriptionType;
+
+//@description Describes a subscription in a bot or a business account
+//@is_canceled_by_bot True, if the subscription was canceled by the bot and can't be extended
+//@title Subscription invoice title
+//@photo Subscription invoice photo
+//@invoice_link The link to the subscription invoice
+starSubscriptionTypeBot is_canceled_by_bot:Bool title:string photo:photo invoice_link:string = StarSubscriptionType;
+
+
 //@description Describes subscription plan paid in Telegram Stars
 //@period The number of seconds between consecutive Telegram Star debiting
 //@star_count The amount of Telegram Stars that must be paid for each period
 starSubscriptionPricing period:int32 star_count:int53 = StarSubscriptionPricing;
 
-//@description Contains information about subscription to a channel chat paid in Telegram Stars
+//@description Contains information about subscription to a channel chat, a bot, or a business account that was paid in Telegram Stars
 //@id Unique identifier of the subscription
-//@chat_id Identifier of the channel chat that is subscribed
+//@chat_id Identifier of the chat that is subscribed
 //@expiration_date Point in time (Unix timestamp) when the subscription will expire or expired
-//@can_reuse True, if the subscription is active and the user can use the method reuseStarSubscription to join the subscribed chat again
 //@is_canceled True, if the subscription was canceled
 //@is_expiring True, if the subscription expires soon and there are no enough Telegram Stars on the user's balance to extend it
-//@invite_link The invite link that can be used to renew the subscription if it has been expired; may be empty, if the link isn't available anymore
 //@pricing The subscription plan
-starSubscription id:string chat_id:int53 expiration_date:int32 can_reuse:Bool is_canceled:Bool is_expiring:Bool invite_link:string pricing:starSubscriptionPricing = StarSubscription;
+//@type Type of the subscription
+starSubscription id:string chat_id:int53 expiration_date:int32 is_canceled:Bool is_expiring:Bool pricing:starSubscriptionPricing type:StarSubscriptionType = StarSubscription;
 
 //@description Represents a list of Telegram Star subscriptions
-//@star_count The amount of owned Telegram Stars
+//@star_amount The amount of owned Telegram Stars
 //@subscriptions List of subscriptions for Telegram Stars
 //@required_star_count The number of Telegram Stars required to buy to extend subscriptions expiring soon
 //@next_offset The offset for the next request. If empty, then there are no more results
-starSubscriptions star_count:int53 subscriptions:vector<starSubscription> required_star_count:int53 next_offset:string = StarSubscriptions;
+starSubscriptions star_amount:starAmount subscriptions:vector<starSubscription> required_star_count:int53 next_offset:string = StarSubscriptions;
+
+
+//@class AffiliateProgramSortOrder @description Describes the order of the found affiliate programs
+
+//@description The affiliate programs must be sorted by the profitability
+affiliateProgramSortOrderProfitability = AffiliateProgramSortOrder;
+
+//@description The affiliate programs must be sorted by creation date
+affiliateProgramSortOrderCreationDate = AffiliateProgramSortOrder;
+
+//@description The affiliate programs must be sorted by the expected revenue
+affiliateProgramSortOrderRevenue = AffiliateProgramSortOrder;
+
+
+//@description Describes parameters of an affiliate program
+//@commission_per_mille The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the program owner;
+//-getOption("affiliate_program_commission_per_mille_min")-getOption("affiliate_program_commission_per_mille_max")
+//@month_count Number of months the program will be active; 0-36. If 0, then the program is eternal
+affiliateProgramParameters commission_per_mille:int32 month_count:int32 = AffiliateProgramParameters;
+
+//@description Contains information about an active affiliate program
+//@parameters Parameters of the affiliate program
+//@end_date Point in time (Unix timestamp) when the affiliate program will be closed; 0 if the affiliate program isn't scheduled to be closed.
+//-If positive, then the program can't be connected using connectChatAffiliateProgram, but active connections will work until the date
+//@daily_revenue_per_user_amount The amount of daily revenue per user in Telegram Stars of the bot that created the affiliate program
+affiliateProgramInfo parameters:affiliateProgramParameters end_date:int32 daily_revenue_per_user_amount:starAmount = AffiliateProgramInfo;
+
+//@description Contains information about an affiliate that received commission from a Telegram Star transaction
+//@commission_per_mille The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the program owner
+//@affiliate_chat_id Identifier of the chat which received the commission
+//@star_amount The amount of Telegram Stars that were received by the affiliate; can be negative for refunds
+affiliateInfo commission_per_mille:int32 affiliate_chat_id:int53 star_amount:starAmount = AffiliateInfo;
+
+//@description Describes a found affiliate program
+//@bot_user_id User identifier of the bot created the program
+//@parameters Information about the affiliate program
+foundAffiliateProgram bot_user_id:int53 parameters:affiliateProgramInfo = FoundAffiliateProgram;
+
+//@description Represents a list of found affiliate programs
+//@total_count The total number of found affiliate programs
+//@programs The list of affiliate programs
+//@next_offset The offset for the next request. If empty, then there are no more results
+foundAffiliatePrograms total_count:int32 programs:vector<foundAffiliateProgram> next_offset:string = FoundAffiliatePrograms;
+
+//@description Describes an affiliate program that was connected to a chat
+//@url The link that can be used to refer users if the program is still active
+//@bot_user_id User identifier of the bot created the program
+//@parameters The parameters of the affiliate program
+//@connection_date Point in time (Unix timestamp) when the affiliate program was connected
+//@is_disconnected True, if the program was canceled by the bot, or disconnected by the chat owner and isn't available anymore
+//@user_count The number of users that used the affiliate program
+//@revenue_star_count The number of Telegram Stars that were earned by the affiliate program
+chatAffiliateProgram url:string bot_user_id:int53 parameters:affiliateProgramParameters connection_date:int32 is_disconnected:Bool user_count:int64 revenue_star_count:int64 = ChatAffiliateProgram;
+
+//@description Represents a list of affiliate programs that were connected to a chat
+//@total_count The total number of affiliate programs that were connected to the chat
+//@programs The list of connected affiliate programs
+//@next_offset The offset for the next request. If empty, then there are no more results
+chatAffiliatePrograms total_count:int32 programs:vector<chatAffiliateProgram> next_offset:string = ChatAffiliatePrograms;
 
 
 //@description Contains information about a product that can be paid with invoice
@@ -857,11 +938,13 @@ premiumStatePaymentOption payment_option:premiumPaymentOption is_current:Bool is
 //@description Describes an option for creating Telegram Premium gift codes or Telegram Premium giveaway. Use telegramPaymentPurposePremiumGiftCodes or telegramPaymentPurposePremiumGiveaway for out-of-store payments
 //@currency ISO 4217 currency code for Telegram Premium gift code payment
 //@amount The amount to pay, in the smallest units of the currency
+//@discount_percentage The discount associated with this option, as a percentage
 //@winner_count Number of users which will be able to activate the gift codes
 //@month_count Number of months the Telegram Premium subscription will be active
 //@store_product_id Identifier of the store product associated with the option; may be empty if none
 //@store_product_quantity Number of times the store product must be paid
-premiumGiftCodePaymentOption currency:string amount:int53 winner_count:int32 month_count:int32 store_product_id:string store_product_quantity:int32 = PremiumGiftCodePaymentOption;
+//@sticker A sticker to be shown along with the gift code; may be null if unknown
+premiumGiftCodePaymentOption currency:string amount:int53 discount_percentage:int32 winner_count:int32 month_count:int32 store_product_id:string store_product_quantity:int32 sticker:sticker = PremiumGiftCodePaymentOption;
 
 //@description Contains a list of options for creating Telegram Premium gift codes or Telegram Premium giveaway @options The list of options
 premiumGiftCodePaymentOptions options:vector<premiumGiftCodePaymentOption> = PremiumGiftCodePaymentOptions;
@@ -912,9 +995,12 @@ starGiveawayPaymentOptions options:vector<starGiveawayPaymentOption> = StarGivea
 //@sticker The sticker representing the gift
 //@star_count Number of Telegram Stars that must be paid for the gift
 //@default_sell_star_count Number of Telegram Stars that can be claimed by the receiver instead of the gift by default. If the gift was paid with just bought Telegram Stars, then full value can be claimed
+//@is_for_birthday True, if the gift is a birthday gift
 //@remaining_count Number of remaining times the gift can be purchased by all users; 0 if not limited or the gift was sold out
 //@total_count Number of total times the gift can be purchased by all users; 0 if not limited
-gift id:int64 sticker:sticker star_count:int53 default_sell_star_count:int53 remaining_count:int32 total_count:int32 = Gift;
+//@first_send_date Point in time (Unix timestamp) when the gift was send for the first time; for sold out gifts only
+//@last_send_date Point in time (Unix timestamp) when the gift was send for the last time; for sold out gifts only
+gift id:int64 sticker:sticker star_count:int53 default_sell_star_count:int53 is_for_birthday:Bool remaining_count:int32 total_count:int32 first_send_date:int32 last_send_date:int32 = Gift;
 
 //@description Contains a list of gifts that can be sent to another user @gifts The list of gifts
 gifts gifts:vector<gift> = Gifts;
@@ -927,7 +1013,7 @@ gifts gifts:vector<gift> = Gifts;
 //@date Point in time (Unix timestamp) when the gift was sent
 //@gift The gift
 //@message_id Identifier of the message with the gift in the chat with the sender of the gift; can be 0 or an identifier of a deleted message; only for the gift receiver
-//@sell_star_count Number of Telegram Stars that can be claimed by the receiver instead of the gift; only for the gift receiver
+//@sell_star_count Number of Telegram Stars that can be claimed by the receiver instead of the gift; 0 if the gift can't be sold by the current user
 userGift sender_user_id:int53 text:formattedText is_private:Bool is_saved:Bool date:int32 gift:gift message_id:int53 sell_star_count:int53 = UserGift;
 
 //@description Represents a list of gifts received by a user
@@ -946,94 +1032,137 @@ starTransactionDirectionIncoming = StarTransactionDirection;
 starTransactionDirectionOutgoing = StarTransactionDirection;
 
 
-//@class BotTransactionPurpose @description Describes purpose of a transaction with a bot
+//@class StarTransactionType @description Describes type of transaction with Telegram Stars
 
-//@description Paid media were bought @media The bought media if the transaction wasn't refunded @payload Bot-provided payload; for bots only
-botTransactionPurposePaidMedia media:vector<PaidMedia> payload:string = BotTransactionPurpose;
+//@description The transaction is a deposit of Telegram Stars from the Premium bot; for regular users only
+starTransactionTypePremiumBotDeposit = StarTransactionType;
 
-//@description User bought a product from the bot
-//@product_info Information about the bought product; may be null if not applicable
-//@invoice_payload Invoice payload; for bots only
-botTransactionPurposeInvoicePayment product_info:productInfo invoice_payload:bytes = BotTransactionPurpose;
+//@description The transaction is a deposit of Telegram Stars from App Store; for regular users only
+starTransactionTypeAppStoreDeposit = StarTransactionType;
 
+//@description The transaction is a deposit of Telegram Stars from Google Play; for regular users only
+starTransactionTypeGooglePlayDeposit = StarTransactionType;
 
-//@class ChatTransactionPurpose @description Describes purpose of a transaction with a supergroup or a channel
+//@description The transaction is a deposit of Telegram Stars from Fragment; for regular users and bots only
+starTransactionTypeFragmentDeposit = StarTransactionType;
 
-//@description Paid media were bought
+//@description The transaction is a deposit of Telegram Stars by another user; for regular users only
+//@user_id Identifier of the user that gifted Telegram Stars; 0 if the user was anonymous
+//@sticker The sticker to be shown in the transaction information; may be null if unknown
+starTransactionTypeUserDeposit user_id:int53 sticker:sticker = StarTransactionType;
+
+//@description The transaction is a deposit of Telegram Stars from a giveaway; for regular users only
+//@chat_id Identifier of a supergroup or a channel chat that created the giveaway
+//@giveaway_message_id Identifier of the message with the giveaway; can be 0 or an identifier of a deleted message
+starTransactionTypeGiveawayDeposit chat_id:int53 giveaway_message_id:int53 = StarTransactionType;
+
+//@description The transaction is a withdrawal of earned Telegram Stars to Fragment; for bots and channel chats only @withdrawal_state State of the withdrawal; may be null for refunds from Fragment
+starTransactionTypeFragmentWithdrawal withdrawal_state:RevenueWithdrawalState = StarTransactionType;
+
+//@description The transaction is a withdrawal of earned Telegram Stars to Telegram Ad platform; for bots and channel chats only
+starTransactionTypeTelegramAdsWithdrawal = StarTransactionType;
+
+//@description The transaction is a payment for Telegram API usage; for bots only @request_count The number of billed requests
+starTransactionTypeTelegramApiUsage request_count:int32 = StarTransactionType;
+
+//@description The transaction is a purchase of paid media from a bot or a business account by the current user; for regular users only
+//@user_id Identifier of the bot or the business account user that sent the paid media
+//@media The bought media if the transaction wasn't refunded
+starTransactionTypeBotPaidMediaPurchase user_id:int53 media:vector<PaidMedia> = StarTransactionType;
+
+//@description The transaction is a sale of paid media by the bot or a business account managed by the bot; for bots only
+//@user_id Identifier of the user that bought the media
+//@media The bought media
+//@payload Bot-provided payload
+//@affiliate Information about the affiliate which received commission from the transaction; may be null if none
+starTransactionTypeBotPaidMediaSale user_id:int53 media:vector<PaidMedia> payload:string affiliate:affiliateInfo = StarTransactionType;
+
+//@description The transaction is a purchase of paid media from a channel by the current user; for regular users only
+//@chat_id Identifier of the channel chat that sent the paid media
 //@message_id Identifier of the corresponding message with paid media; can be 0 or an identifier of a deleted message
 //@media The bought media if the transaction wasn't refunded
-chatTransactionPurposePaidMedia message_id:int53 media:vector<PaidMedia> = ChatTransactionPurpose;
+starTransactionTypeChannelPaidMediaPurchase chat_id:int53 message_id:int53 media:vector<PaidMedia> = StarTransactionType;
 
-//@description User joined the channel and subscribed to regular payments in Telegram Stars
-//@period The number of seconds between consecutive Telegram Star debiting
-chatTransactionPurposeJoin period:int32 = ChatTransactionPurpose;
+//@description The transaction is a sale of paid media by the channel chat; for channel chats only
+//@user_id Identifier of the user that bought the media
+//@message_id Identifier of the corresponding message with paid media; can be 0 or an identifier of a deleted message
+//@media The bought media
+starTransactionTypeChannelPaidMediaSale user_id:int53 message_id:int53 media:vector<PaidMedia> = StarTransactionType;
 
-//@description User paid for a reaction
+//@description The transaction is a purchase of a product from a bot or a business account by the current user; for regular users only
+//@user_id Identifier of the bot or the business account user that created the invoice
+//@product_info Information about the bought product
+starTransactionTypeBotInvoicePurchase user_id:int53 product_info:productInfo = StarTransactionType;
+
+//@description The transaction is a sale of a product by the bot; for bots only
+//@user_id Identifier of the user that bought the product
+//@product_info Information about the bought product
+//@invoice_payload Invoice payload
+//@affiliate Information about the affiliate which received commission from the transaction; may be null if none
+starTransactionTypeBotInvoiceSale user_id:int53 product_info:productInfo invoice_payload:bytes affiliate:affiliateInfo = StarTransactionType;
+
+//@description The transaction is a purchase of a subscription from a bot or a business account by the current user; for regular users only
+//@user_id Identifier of the bot or the business account user that created the subscription link
+//@subscription_period The number of seconds between consecutive Telegram Star debitings
+//@product_info Information about the bought subscription
+starTransactionTypeBotSubscriptionPurchase user_id:int53 subscription_period:int32 product_info:productInfo = StarTransactionType;
+
+//@description The transaction is a sale of a subscription by the bot; for bots only
+//@user_id Identifier of the user that bought the subscription
+//@subscription_period The number of seconds between consecutive Telegram Star debitings
+//@product_info Information about the bought subscription
+//@invoice_payload Invoice payload
+//@affiliate Information about the affiliate which received commission from the transaction; may be null if none
+starTransactionTypeBotSubscriptionSale user_id:int53 subscription_period:int32 product_info:productInfo invoice_payload:bytes affiliate:affiliateInfo = StarTransactionType;
+
+//@description The transaction is a purchase of a subscription to a channel chat by the current user; for regular users only
+//@chat_id Identifier of the channel chat that created the subscription
+//@subscription_period The number of seconds between consecutive Telegram Star debitings
+starTransactionTypeChannelSubscriptionPurchase chat_id:int53 subscription_period:int32 = StarTransactionType;
+
+//@description The transaction is a sale of a subscription by the channel chat; for channel chats only
+//@user_id Identifier of the user that bought the subscription
+//@subscription_period The number of seconds between consecutive Telegram Star debitings
+starTransactionTypeChannelSubscriptionSale user_id:int53 subscription_period:int32 = StarTransactionType;
+
+//@description The transaction is a purchase of a gift to another user; for regular users and bots only @user_id Identifier of the user that received the gift @gift The gift
+starTransactionTypeGiftPurchase user_id:int53 gift:gift = StarTransactionType;
+
+//@description The transaction is a sale of a gift received from another user or bot; for regular users only @user_id Identifier of the user that sent the gift @gift The gift
+starTransactionTypeGiftSale user_id:int53 gift:gift = StarTransactionType;
+
+//@description The transaction is a sending of a paid reaction to a message in a channel chat by the current user; for regular users only
+//@chat_id Identifier of the channel chat
 //@message_id Identifier of the reacted message; can be 0 or an identifier of a deleted message
-chatTransactionPurposeReaction message_id:int53 = ChatTransactionPurpose;
+starTransactionTypeChannelPaidReactionSend chat_id:int53 message_id:int53 = StarTransactionType;
 
-//@description User received Telegram Stars from a giveaway @giveaway_message_id Identifier of the message with giveaway; can be 0 or an identifier of a deleted message
-chatTransactionPurposeGiveaway giveaway_message_id:int53 = ChatTransactionPurpose;
+//@description The transaction is a receiving of a paid reaction to a message by the channel chat; for channel chats only
+//@user_id Identifier of the user that added the paid reaction
+//@message_id Identifier of the reacted message; can be 0 or an identifier of a deleted message
+starTransactionTypeChannelPaidReactionReceive user_id:int53 message_id:int53 = StarTransactionType;
 
+//@description The transaction is a receiving of a commission from an affiliate program; for regular users, bots and channel chats only
+//@chat_id Identifier of the chat that created the affiliate program
+//@commission_per_mille The number of Telegram Stars received by the affiliate for each 1000 Telegram Stars received by the program owner
+starTransactionTypeAffiliateProgramCommission chat_id:int53 commission_per_mille:int32 = StarTransactionType;
 
-//@class UserTransactionPurpose @description Describes purpose of a transaction with a user
-
-//@description A user gifted Telegram Stars @sticker A sticker to be shown in the transaction information; may be null if unknown
-userTransactionPurposeGiftedStars sticker:sticker = UserTransactionPurpose;
-
-//@description The current user sold a gift received from another user @gift The gift
-userTransactionPurposeGiftSell gift:gift = UserTransactionPurpose;
-
-//@description The current user sent a gift to another user @gift The gift
-userTransactionPurposeGiftSend gift:gift = UserTransactionPurpose;
-
-
-//@class StarTransactionPartner @description Describes source or recipient of a transaction with Telegram Stars
-
-//@description The transaction is a transaction with Telegram through a bot
-starTransactionPartnerTelegram = StarTransactionPartner;
-
-//@description The transaction is a transaction with App Store
-starTransactionPartnerAppStore = StarTransactionPartner;
-
-//@description The transaction is a transaction with Google Play
-starTransactionPartnerGooglePlay = StarTransactionPartner;
-
-//@description The transaction is a transaction with Fragment @withdrawal_state State of the withdrawal; may be null for refunds from Fragment
-starTransactionPartnerFragment withdrawal_state:RevenueWithdrawalState = StarTransactionPartner;
-
-//@description The transaction is a transaction with Telegram Ad platform
-starTransactionPartnerTelegramAds = StarTransactionPartner;
-
-//@description The transaction is a transaction with a bot @user_id Identifier of the bot @purpose Purpose of the transaction
-starTransactionPartnerBot user_id:int53 purpose:BotTransactionPurpose = StarTransactionPartner;
-
-//@description The transaction is a transaction with a business account @user_id Identifier of the business account user @media The bought media if the transaction wasn't refunded
-starTransactionPartnerBusiness user_id:int53 media:vector<PaidMedia> = StarTransactionPartner;
-
-//@description The transaction is a transaction with a supergroup or a channel chat @chat_id Identifier of the chat @purpose Purpose of the transaction
-starTransactionPartnerChat chat_id:int53 purpose:ChatTransactionPurpose = StarTransactionPartner;
-
-//@description The transaction is a transaction with another user @user_id Identifier of the user; 0 if the user was anonymous @purpose Purpose of the transaction
-starTransactionPartnerUser user_id:int53 purpose:UserTransactionPurpose = StarTransactionPartner;
-
-//@description The transaction is a transaction with unknown partner
-starTransactionPartnerUnsupported = StarTransactionPartner;
+//@description The transaction is a transaction of an unsupported type
+starTransactionTypeUnsupported = StarTransactionType;
 
 
 //@description Represents a transaction changing the amount of owned Telegram Stars
 //@id Unique identifier of the transaction
-//@star_count The amount of added owned Telegram Stars; negative for outgoing transactions
+//@star_amount The amount of added owned Telegram Stars; negative for outgoing transactions
 //@is_refund True, if the transaction is a refund of a previous transaction
 //@date Point in time (Unix timestamp) when the transaction was completed
-//@partner Source of the incoming transaction, or its recipient for outgoing transactions
-starTransaction id:string star_count:int53 is_refund:Bool date:int32 partner:StarTransactionPartner = StarTransaction;
+//@type Type of the transaction
+starTransaction id:string star_amount:starAmount is_refund:Bool date:int32 type:StarTransactionType = StarTransaction;
 
 //@description Represents a list of Telegram Star transactions
-//@star_count The amount of owned Telegram Stars
+//@star_amount The amount of owned Telegram Stars
 //@transactions List of transactions with Telegram Stars
 //@next_offset The offset for the next request. If empty, then there are no more results
-starTransactions star_count:int53 transactions:vector<starTransaction> next_offset:string = StarTransactions;
+starTransactions star_amount:starAmount transactions:vector<starTransaction> next_offset:string = StarTransactions;
 
 
 //@class GiveawayParticipantStatus @description Contains information about status of a user in a giveaway
@@ -1164,12 +1293,19 @@ user id:int53 first_name:string last_name:string usernames:usernames phone_numbe
 //@privacy_policy_url The HTTP link to the privacy policy of the bot. If empty, then /privacy command must be used if supported by the bot. If the command isn't supported, then https://telegram.org/privacy-tpa must be opened
 //@default_group_administrator_rights Default administrator rights for adding the bot to basic group and supergroup chats; may be null
 //@default_channel_administrator_rights Default administrator rights for adding the bot to channels; may be null
+//@affiliate_program Information about the affiliate program of the bot; may be null if none
+//@web_app_background_light_color Default light background color for bot Web Apps; -1 if not specified
+//@web_app_background_dark_color Default dark background color for bot Web Apps; -1 if not specified
+//@web_app_header_light_color Default light header color for bot Web Apps; -1 if not specified
+//@web_app_header_dark_color Default dark header color for bot Web Apps; -1 if not specified
+//@can_get_revenue_statistics True, if the bot's revenue statistics are available to the current user
+//@can_manage_emoji_status True, if the bot can manage emoji status of the current user
 //@has_media_previews True, if the bot has media previews
 //@edit_commands_link The internal link, which can be used to edit bot commands; may be null
 //@edit_description_link The internal link, which can be used to edit bot description; may be null
 //@edit_description_media_link The internal link, which can be used to edit the photo or animation shown in the chat with the bot if the chat is empty; may be null
 //@edit_settings_link The internal link, which can be used to edit bot settings; may be null
-botInfo short_description:string description:string photo:photo animation:animation menu_button:botMenuButton commands:vector<botCommand> privacy_policy_url:string default_group_administrator_rights:chatAdministratorRights default_channel_administrator_rights:chatAdministratorRights has_media_previews:Bool edit_commands_link:InternalLinkType edit_description_link:InternalLinkType edit_description_media_link:InternalLinkType edit_settings_link:InternalLinkType = BotInfo;
+botInfo short_description:string description:string photo:photo animation:animation menu_button:botMenuButton commands:vector<botCommand> privacy_policy_url:string default_group_administrator_rights:chatAdministratorRights default_channel_administrator_rights:chatAdministratorRights affiliate_program:affiliateProgramInfo web_app_background_light_color:int32 web_app_background_dark_color:int32 web_app_header_light_color:int32 web_app_header_dark_color:int32 can_get_revenue_statistics:Bool can_manage_emoji_status:Bool has_media_previews:Bool edit_commands_link:InternalLinkType edit_description_link:InternalLinkType edit_description_media_link:InternalLinkType edit_settings_link:InternalLinkType = BotInfo;
 
 //@description Contains full information about a user
 //@personal_photo User profile photo set by the current user for the contact; may be null. If null and user.profile_photo is null, then the photo is empty; otherwise, it is unknown.
@@ -1191,12 +1327,11 @@ botInfo short_description:string description:string photo:photo animation:animat
 //@bio A short user bio; may be null for bots
 //@birthdate Birthdate of the user; may be null if unknown
 //@personal_chat_id Identifier of the personal chat of the user; 0 if none
-//@premium_gift_options The list of available options for gifting Telegram Premium to the user
 //@gift_count Number of gifts saved to profile by the user
 //@group_in_common_count Number of group chats where both the other user and the current user are a member; 0 for the current user
 //@business_info Information about business settings for Telegram Business accounts; may be null if none
 //@bot_info For bots, information about the bot; may be null if the user isn't a bot
-userFullInfo personal_photo:chatPhoto photo:chatPhoto public_photo:chatPhoto block_list:BlockList can_be_called:Bool supports_video_calls:Bool has_private_calls:Bool has_private_forwards:Bool has_restricted_voice_and_video_note_messages:Bool has_posted_to_profile_stories:Bool has_sponsored_messages_enabled:Bool need_phone_number_privacy_exception:Bool set_chat_background:Bool bio:formattedText birthdate:birthdate personal_chat_id:int53 premium_gift_options:vector<premiumPaymentOption> gift_count:int32 group_in_common_count:int32 business_info:businessInfo bot_info:botInfo = UserFullInfo;
+userFullInfo personal_photo:chatPhoto photo:chatPhoto public_photo:chatPhoto block_list:BlockList can_be_called:Bool supports_video_calls:Bool has_private_calls:Bool has_private_forwards:Bool has_restricted_voice_and_video_note_messages:Bool has_posted_to_profile_stories:Bool has_sponsored_messages_enabled:Bool need_phone_number_privacy_exception:Bool set_chat_background:Bool bio:formattedText birthdate:birthdate personal_chat_id:int53 gift_count:int32 group_in_common_count:int32 business_info:businessInfo bot_info:botInfo = UserFullInfo;
 
 //@description Represents a list of users @total_count Approximate total number of users found @user_ids A list of user identifiers
 users total_count:int32 user_ids:vector<int53> = Users;
@@ -1753,8 +1888,8 @@ factCheck text:formattedText country_code:string = FactCheck;
 //@is_channel_post True, if the message is a channel post. All messages to channels are channel posts, all other messages are not channel posts
 //@is_topic_message True, if the message is a forum topic message
 //@contains_unread_mention True, if the message contains an unread mention for the current user
-//@date Point in time (Unix timestamp) when the message was sent
-//@edit_date Point in time (Unix timestamp) when the message was last edited
+//@date Point in time (Unix timestamp) when the message was sent; 0 for scheduled messages
+//@edit_date Point in time (Unix timestamp) when the message was last edited; 0 for scheduled messages
 //@forward_info Information about the initial message sender; may be null if none or unknown
 //@import_info Information about the initial message for messages created with importMessages; may be null if the message isn't imported
 //@interaction_info Information about interactions with the message; may be null if none
@@ -2343,6 +2478,37 @@ loginUrlInfoOpen url:string skip_confirmation:Bool = LoginUrlInfo;
 loginUrlInfoRequestConfirmation url:string domain:string bot_user_id:int53 request_write_access:Bool = LoginUrlInfo;
 
 
+//@description Contains parameters of the application theme
+//@background_color A color of the background in the RGB format
+//@secondary_background_color A secondary color for the background in the RGB format
+//@header_background_color A color of the header background in the RGB format
+//@bottom_bar_background_color A color of the bottom bar background in the RGB format
+//@section_background_color A color of the section background in the RGB format
+//@section_separator_color A color of the section separator in the RGB format
+//@text_color A color of text in the RGB format
+//@accent_text_color An accent color of the text in the RGB format
+//@section_header_text_color A color of text on the section headers in the RGB format
+//@subtitle_text_color A color of the subtitle text in the RGB format
+//@destructive_text_color A color of the text for destructive actions in the RGB format
+//@hint_color A color of hints in the RGB format
+//@link_color A color of links in the RGB format
+//@button_color A color of the buttons in the RGB format
+//@button_text_color A color of text on the buttons in the RGB format
+themeParameters background_color:int32 secondary_background_color:int32 header_background_color:int32 bottom_bar_background_color:int32 section_background_color:int32 section_separator_color:int32 text_color:int32 accent_text_color:int32 section_header_text_color:int32 subtitle_text_color:int32 destructive_text_color:int32 hint_color:int32 link_color:int32 button_color:int32 button_text_color:int32 = ThemeParameters;
+
+
+//@class WebAppOpenMode @description Describes mode in which a Web App is opened
+
+//@description The Web App is opened in the compact mode
+webAppOpenModeCompact = WebAppOpenMode;
+
+//@description The Web App is opened in the full-size mode
+webAppOpenModeFullSize = WebAppOpenMode;
+
+//@description The Web App is opened in the full-screen mode
+webAppOpenModeFullScreen = WebAppOpenMode;
+
+
 //@description Contains information about a Web App found by its short name
 //@web_app The Web App
 //@request_write_access True, if the user must be asked for the permission to the bot to send them messages
@@ -2352,8 +2518,14 @@ foundWebApp web_app:webApp request_write_access:Bool skip_confirmation:Bool = Fo
 //@description Contains information about a Web App @launch_id Unique identifier for the Web App launch @url A Web App URL to open in a web view
 webAppInfo launch_id:int64 url:string = WebAppInfo;
 
-//@description Contains information about the main Web App of a bot @url URL of the Web App to open @is_compact True, if the Web App must always be opened in the compact mode instead of the full-size mode
-mainWebApp url:string is_compact:Bool = MainWebApp;
+//@description Contains information about the main Web App of a bot @url URL of the Web App to open @mode The mode in which the Web App must be opened
+mainWebApp url:string mode:WebAppOpenMode = MainWebApp;
+
+//@description Options to be used when a Web App is opened
+//@theme Preferred Web App theme; pass null to use the default theme
+//@application_name Short name of the current application; 0-64 English letters, digits, and underscores
+//@mode The mode in which the Web App is opened; pass null to open in webAppOpenModeFullSize
+webAppOpenParameters theme:themeParameters application_name:string mode:WebAppOpenMode = WebAppOpenParameters;
 
 
 //@description Contains information about a message thread
@@ -2932,31 +3104,13 @@ address country_code:string state:string city:string street_line1:string street_
 locationAddress country_code:string state:string city:string street:string = LocationAddress;
 
 
-//@description Contains parameters of the application theme
-//@background_color A color of the background in the RGB format
-//@secondary_background_color A secondary color for the background in the RGB format
-//@header_background_color A color of the header background in the RGB format
-//@bottom_bar_background_color A color of the bottom bar background in the RGB format
-//@section_background_color A color of the section background in the RGB format
-//@section_separator_color A color of the section separator in the RGB format
-//@text_color A color of text in the RGB format
-//@accent_text_color An accent color of the text in the RGB format
-//@section_header_text_color A color of text on the section headers in the RGB format
-//@subtitle_text_color A color of the subtitle text in the RGB format
-//@destructive_text_color A color of the text for destructive actions in the RGB format
-//@hint_color A color of hints in the RGB format
-//@link_color A color of links in the RGB format
-//@button_color A color of the buttons in the RGB format
-//@button_text_color A color of text on the buttons in the RGB format
-themeParameters background_color:int32 secondary_background_color:int32 header_background_color:int32 bottom_bar_background_color:int32 section_background_color:int32 section_separator_color:int32 text_color:int32 accent_text_color:int32 section_header_text_color:int32 subtitle_text_color:int32 destructive_text_color:int32 hint_color:int32 link_color:int32 button_color:int32 button_text_color:int32 = ThemeParameters;
-
-
 //@description Portion of the price of a product (e.g., "delivery cost", "tax amount") @label Label for this portion of the product price @amount Currency amount in the smallest units of the currency
 labeledPricePart label:string amount:int53 = LabeledPricePart;
 
 //@description Product invoice
 //@currency ISO 4217 currency code
 //@price_parts A list of objects used to calculate the total price of the product
+//@subscription_period The number of seconds between consecutive Telegram Star debiting for subscription invoices; 0 if the invoice doesn't create subscription
 //@max_tip_amount The maximum allowed amount of tip in the smallest units of the currency
 //@suggested_tip_amounts Suggested amounts of tip in the smallest units of the currency
 //@recurring_payment_terms_of_service_url An HTTP URL with terms of service for recurring payments. If non-empty, the invoice payment will result in recurring payments and the user must accept the terms of service before allowed to pay
@@ -2969,7 +3123,7 @@ labeledPricePart label:string amount:int53 = LabeledPricePart;
 //@send_phone_number_to_provider True, if the user's phone number will be sent to the provider
 //@send_email_address_to_provider True, if the user's email address will be sent to the provider
 //@is_flexible True, if the total price depends on the shipping method
-invoice currency:string price_parts:vector<labeledPricePart> max_tip_amount:int53 suggested_tip_amounts:vector<int53> recurring_payment_terms_of_service_url:string terms_of_service_url:string is_test:Bool need_name:Bool need_phone_number:Bool need_email_address:Bool need_shipping_address:Bool send_phone_number_to_provider:Bool send_email_address_to_provider:Bool is_flexible:Bool = Invoice;
+invoice currency:string price_parts:vector<labeledPricePart> subscription_period:int32 max_tip_amount:int53 suggested_tip_amounts:vector<int53> recurring_payment_terms_of_service_url:string terms_of_service_url:string is_test:Bool need_name:Bool need_phone_number:Bool need_email_address:Bool need_shipping_address:Bool send_phone_number_to_provider:Bool send_email_address_to_provider:Bool is_flexible:Bool = Invoice;
 
 //@description Order information
 //@name Name of the user
@@ -3038,6 +3192,9 @@ paymentFormTypeRegular invoice:invoice payment_provider_user_id:int53 payment_pr
 
 //@description The payment form is for a payment in Telegram Stars @star_count Number of Telegram Stars that will be paid
 paymentFormTypeStars star_count:int53 = PaymentFormType;
+
+//@description The payment form is for a payment in Telegram Stars for subscription @pricing Information about subscription plan
+paymentFormTypeStarSubscription pricing:starSubscriptionPricing = PaymentFormType;
 
 
 //@description Contains information about an invoice payment form
@@ -3614,27 +3771,29 @@ messageCustomServiceAction text:string = MessageContent;
 //@description A new high score was achieved in a game @game_message_id Identifier of the message with the game, can be an identifier of a deleted message @game_id Identifier of the game; may be different from the games presented in the message with the game @score New score
 messageGameScore game_message_id:int53 game_id:int64 score:int32 = MessageContent;
 
-//@description A payment has been completed
+//@description A payment has been sent to a bot or a business account
 //@invoice_chat_id Identifier of the chat, containing the corresponding invoice message
 //@invoice_message_id Identifier of the message with the corresponding invoice; can be 0 or an identifier of a deleted message
 //@currency Currency for the price of the product
 //@total_amount Total price for the product, in the smallest units of the currency
+//@subscription_until_date Point in time (Unix timestamp) when the subscription will expire; 0 if unknown or the payment isn't recurring
 //@is_recurring True, if this is a recurring payment
 //@is_first_recurring True, if this is the first recurring payment
 //@invoice_name Name of the invoice; may be empty if unknown
-messagePaymentSuccessful invoice_chat_id:int53 invoice_message_id:int53 currency:string total_amount:int53 is_recurring:Bool is_first_recurring:Bool invoice_name:string = MessageContent;
+messagePaymentSuccessful invoice_chat_id:int53 invoice_message_id:int53 currency:string total_amount:int53 subscription_until_date:int32 is_recurring:Bool is_first_recurring:Bool invoice_name:string = MessageContent;
 
-//@description A payment has been completed; for bots only
+//@description A payment has been received by the bot or the business account
 //@currency Currency for price of the product
 //@total_amount Total price for the product, in the smallest units of the currency
+//@subscription_until_date Point in time (Unix timestamp) when the subscription will expire; 0 if unknown or the payment isn't recurring
 //@is_recurring True, if this is a recurring payment
 //@is_first_recurring True, if this is the first recurring payment
 //@invoice_payload Invoice payload
-//@shipping_option_id Identifier of the shipping option chosen by the user; may be empty if not applicable
-//@order_info Information about the order; may be null
+//@shipping_option_id Identifier of the shipping option chosen by the user; may be empty if not applicable; for bots only
+//@order_info Information about the order; may be null; for bots only
 //@telegram_payment_charge_id Telegram payment identifier
 //@provider_payment_charge_id Provider payment identifier
-messagePaymentSuccessfulBot currency:string total_amount:int53 is_recurring:Bool is_first_recurring:Bool invoice_payload:bytes shipping_option_id:string order_info:orderInfo telegram_payment_charge_id:string provider_payment_charge_id:string = MessageContent;
+messagePaymentSuccessfulBot currency:string total_amount:int53 subscription_until_date:int32 is_recurring:Bool is_first_recurring:Bool invoice_payload:bytes shipping_option_id:string order_info:orderInfo telegram_payment_charge_id:string provider_payment_charge_id:string = MessageContent;
 
 //@description A payment has been refunded
 //@owner_id Identifier of the previous owner of the Telegram Stars that refunds them
@@ -3727,7 +3886,7 @@ messageGiveawayPrizeStars star_count:int53 transaction_id:string boosted_chat_id
 //@description A gift was received or sent by the current user
 //@gift The gift
 //@text Message added to the gift
-//@sell_star_count Number of Telegram Stars that can be claimed by the receiver instead of the gift
+//@sell_star_count Number of Telegram Stars that can be claimed by the receiver instead of the gift; 0 if the gift can't be sold by the receiver
 //@is_private True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able to see them
 //@is_saved True, if the gift is displayed on the user's profile page; only for the receiver of the gift
 //@was_converted True, if the gift was converted to Telegram Stars; only for the receiver of the gift
@@ -3869,6 +4028,10 @@ messageSchedulingStateSendAtDate send_date:int32 = MessageSchedulingState;
 //@description The message will be sent when the other user is online. Applicable to private chats only and when the exact online status of the other user is known
 messageSchedulingStateSendWhenOnline = MessageSchedulingState;
 
+//@description The message will be sent when the video in the message is converted and optimized; can be used only by the server
+//@send_date Approximate point in time (Unix timestamp) when the message is expected to be sent
+messageSchedulingStateSendWhenVideoProcessed send_date:int32 = MessageSchedulingState;
+
 
 //@class MessageSelfDestructType @description Describes when a message will be self-destructed
 
@@ -3883,12 +4046,13 @@ messageSelfDestructTypeImmediately = MessageSelfDestructType;
 //@disable_notification Pass true to disable notification for the message
 //@from_background Pass true if the message is sent from the background
 //@protect_content Pass true if the content of the message must be protected from forwarding and saving; for bots only
+//@allow_paid_broadcast Pass true to allow the message to ignore regular broadcast limits for a small fee; for bots only
 //@update_order_of_installed_sticker_sets Pass true if the user explicitly chosen a sticker or a custom emoji from an installed sticker set; applicable only to sendMessage and sendMessageAlbum
 //@scheduling_state Message scheduling state; pass null to send message immediately. Messages sent to a secret chat, live location messages and self-destructing messages can't be scheduled
 //@effect_id Identifier of the effect to apply to the message; pass 0 if none; applicable only to sendMessage and sendMessageAlbum in private chats
 //@sending_id Non-persistent identifier, which will be returned back in messageSendingStatePending object and can be used to match sent messages and corresponding updateNewMessage updates
 //@only_preview Pass true to get a fake message instead of actually sending them
-messageSendOptions disable_notification:Bool from_background:Bool protect_content:Bool update_order_of_installed_sticker_sets:Bool scheduling_state:MessageSchedulingState effect_id:int64 sending_id:int32 only_preview:Bool = MessageSendOptions;
+messageSendOptions disable_notification:Bool from_background:Bool protect_content:Bool allow_paid_broadcast:Bool update_order_of_installed_sticker_sets:Bool scheduling_state:MessageSchedulingState effect_id:int64 sending_id:int32 only_preview:Bool = MessageSendOptions;
 
 //@description Options to be used when a message content is copied without reference to the original sender. Service messages, messages with messageInvoice, messagePaidMedia, messageGiveaway, or messageGiveawayWinners content can't be copied
 //@send_copy True, if content of the message needs to be copied without reference to the original sender. Always true if the message is forwarded to a secret chat or is local.
@@ -3965,7 +4129,7 @@ inputMessagePhoto photo:InputFile thumbnail:inputThumbnail added_sticker_file_id
 inputMessageSticker sticker:InputFile thumbnail:inputThumbnail width:int32 height:int32 emoji:string = InputMessageContent;
 
 //@description A video message
-//@video Video to be sent. The video is expected to be reencoded to MPEG4 format with H.264 codec by the sender
+//@video Video to be sent. The video is expected to be re-encoded to MPEG4 format with H.264 codec by the sender
 //@thumbnail Video thumbnail; pass null to skip thumbnail uploading
 //@added_sticker_file_ids File identifiers of the stickers added to the video, if applicable
 //@duration Duration of the video, in seconds
@@ -3979,7 +4143,7 @@ inputMessageSticker sticker:InputFile thumbnail:inputThumbnail width:int32 heigh
 inputMessageVideo video:InputFile thumbnail:inputThumbnail added_sticker_file_ids:vector<int32> duration:int32 width:int32 height:int32 supports_streaming:Bool caption:formattedText show_caption_above_media:Bool self_destruct_type:MessageSelfDestructType has_spoiler:Bool = InputMessageContent;
 
 //@description A video note message
-//@video_note Video note to be sent
+//@video_note Video note to be sent. The video is expected to be encoded to MPEG4 format with H.264 codec and have no data outside of the visible circle
 //@thumbnail Video thumbnail; may be null if empty; pass null to skip thumbnail uploading
 //@duration Duration of the video, in seconds; 0-60
 //@length Video width and height; must be positive and not greater than 640
@@ -4056,7 +4220,7 @@ inputMessageForwarded from_chat_id:int53 message_id:int53 in_game_share:Bool cop
 //@can_be_copied_to_secret_chat True, if content of the message can be copied to a secret chat using inputMessageForwarded or forwardMessages with copy options
 //@can_be_deleted_only_for_self True, if the message can be deleted only for the current user while other users will continue to see it using the method deleteMessages with revoke == false
 //@can_be_deleted_for_all_users True, if the message can be deleted for all users using the method deleteMessages with revoke == true
-//@can_be_edited True, if the message can be edited using the methods editMessageText, editMessageMedia, editMessageCaption, or editMessageReplyMarkup.
+//@can_be_edited True, if the message can be edited using the methods editMessageText, editMessageCaption, or editMessageReplyMarkup.
 //-For live location and poll messages this fields shows whether editMessageLiveLocation or stopPoll can be used with this message
 //@can_be_forwarded True, if the message can be forwarded using inputMessageForwarded or forwardMessages
 //@can_be_paid True, if the message can be paid using inputInvoiceMessage
@@ -4065,6 +4229,7 @@ inputMessageForwarded from_chat_id:int53 message_id:int53 in_game_share:Bool cop
 //@can_be_replied_in_another_chat True, if the message can be replied in another chat or forum topic using inputMessageReplyToExternalMessage
 //@can_be_saved True, if content of the message can be saved locally or copied using inputMessageForwarded or forwardMessages with copy options
 //@can_be_shared_in_story True, if the message can be shared in a story using inputStoryAreaTypeMessage
+//@can_edit_media True, if the message can be edited using the method editMessageMedia
 //@can_edit_scheduling_state True, if scheduling state of the message can be edited
 //@can_get_embedding_code True, if code for message embedding can be received using getMessageEmbeddingCode
 //@can_get_link True, if a link can be generated for the message using getMessageLink
@@ -4079,7 +4244,7 @@ inputMessageForwarded from_chat_id:int53 message_id:int53 in_game_share:Bool cop
 //@can_report_supergroup_spam True, if the message can be reported using reportSupergroupSpam
 //@can_set_fact_check True, if fact check for the message can be changed through setMessageFactCheck
 //@need_show_statistics True, if message statistics must be available from context menu of the message
-messageProperties can_be_copied_to_secret_chat:Bool can_be_deleted_only_for_self:Bool can_be_deleted_for_all_users:Bool can_be_edited:Bool can_be_forwarded:Bool can_be_paid:Bool can_be_pinned:Bool can_be_replied:Bool can_be_replied_in_another_chat:Bool can_be_saved:Bool can_be_shared_in_story:Bool can_edit_scheduling_state:Bool can_get_embedding_code:Bool can_get_link:Bool can_get_media_timestamp_links:Bool can_get_message_thread:Bool can_get_read_date:Bool can_get_statistics:Bool can_get_viewers:Bool can_recognize_speech:Bool can_report_chat:Bool can_report_reactions:Bool can_report_supergroup_spam:Bool can_set_fact_check:Bool need_show_statistics:Bool = MessageProperties;
+messageProperties can_be_copied_to_secret_chat:Bool can_be_deleted_only_for_self:Bool can_be_deleted_for_all_users:Bool can_be_edited:Bool can_be_forwarded:Bool can_be_paid:Bool can_be_pinned:Bool can_be_replied:Bool can_be_replied_in_another_chat:Bool can_be_saved:Bool can_be_shared_in_story:Bool can_edit_media:Bool can_edit_scheduling_state:Bool can_get_embedding_code:Bool can_get_link:Bool can_get_media_timestamp_links:Bool can_get_message_thread:Bool can_get_read_date:Bool can_get_statistics:Bool can_get_viewers:Bool can_recognize_speech:Bool can_report_chat:Bool can_report_reactions:Bool can_report_supergroup_spam:Bool can_set_fact_check:Bool need_show_statistics:Bool = MessageProperties;
 
 
 //@class SearchMessagesFilter @description Represents a filter for message search results
@@ -4222,7 +4387,7 @@ emojis emojis:vector<string> = Emojis;
 //@title Title of the sticker set
 //@name Name of the sticker set
 //@thumbnail Sticker set thumbnail in WEBP, TGS, or WEBM format with width and height 100; may be null. The file can be downloaded only before the thumbnail is changed
-//@thumbnail_outline Sticker set thumbnail's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner
+//@thumbnail_outline Sticker set thumbnail's outline; may be null if unknown
 //@is_owned True, if the sticker set is owned by the current user
 //@is_installed True, if the sticker set has been installed by the current user
 //@is_archived True, if the sticker set has been archived. A sticker set can't be installed and archived simultaneously
@@ -4233,14 +4398,14 @@ emojis emojis:vector<string> = Emojis;
 //@is_viewed True for already viewed trending sticker sets
 //@stickers List of stickers in this set
 //@emojis A list of emojis corresponding to the stickers in the same order. The list is only for informational purposes, because a sticker is always sent with a fixed emoji from the corresponding Sticker object
-stickerSet id:int64 title:string name:string thumbnail:thumbnail thumbnail_outline:vector<closedVectorPath> is_owned:Bool is_installed:Bool is_archived:Bool is_official:Bool sticker_type:StickerType needs_repainting:Bool is_allowed_as_chat_emoji_status:Bool is_viewed:Bool stickers:vector<sticker> emojis:vector<emojis> = StickerSet;
+stickerSet id:int64 title:string name:string thumbnail:thumbnail thumbnail_outline:outline is_owned:Bool is_installed:Bool is_archived:Bool is_official:Bool sticker_type:StickerType needs_repainting:Bool is_allowed_as_chat_emoji_status:Bool is_viewed:Bool stickers:vector<sticker> emojis:vector<emojis> = StickerSet;
 
 //@description Represents short information about a sticker set
 //@id Identifier of the sticker set
 //@title Title of the sticker set
 //@name Name of the sticker set
 //@thumbnail Sticker set thumbnail in WEBP, TGS, or WEBM format with width and height 100; may be null. The file can be downloaded only before the thumbnail is changed
-//@thumbnail_outline Sticker set thumbnail's outline represented as a list of closed vector paths; may be empty. The coordinate system origin is in the upper-left corner
+//@thumbnail_outline Sticker set thumbnail's outline; may be null if unknown
 //@is_owned True, if the sticker set is owned by the current user
 //@is_installed True, if the sticker set has been installed by the current user
 //@is_archived True, if the sticker set has been archived. A sticker set can't be installed and archived simultaneously
@@ -4251,7 +4416,7 @@ stickerSet id:int64 title:string name:string thumbnail:thumbnail thumbnail_outli
 //@is_viewed True for already viewed trending sticker sets
 //@size Total number of stickers in the set
 //@covers Up to the first 5 stickers from the set, depending on the context. If the application needs more stickers the full sticker set needs to be requested
-stickerSetInfo id:int64 title:string name:string thumbnail:thumbnail thumbnail_outline:vector<closedVectorPath> is_owned:Bool is_installed:Bool is_archived:Bool is_official:Bool sticker_type:StickerType needs_repainting:Bool is_allowed_as_chat_emoji_status:Bool is_viewed:Bool size:int32 covers:vector<sticker> = StickerSetInfo;
+stickerSetInfo id:int64 title:string name:string thumbnail:thumbnail thumbnail_outline:outline is_owned:Bool is_installed:Bool is_archived:Bool is_official:Bool sticker_type:StickerType needs_repainting:Bool is_allowed_as_chat_emoji_status:Bool is_viewed:Bool size:int32 covers:vector<sticker> = StickerSetInfo;
 
 //@description Represents a list of sticker sets @total_count Approximate total number of sticker sets found @sets List of sticker sets
 stickerSets total_count:int32 sets:vector<stickerSetInfo> = StickerSets;
@@ -5086,6 +5251,26 @@ httpUrl url:string = HttpUrl;
 userLink url:string expires_in:int32 = UserLink;
 
 
+//@description Describes allowed types for the target chat
+//@allow_user_chats True, if private chats with ordinary users are allowed
+//@allow_bot_chats True, if private chats with other bots are allowed
+//@allow_group_chats True, if basic group and supergroup chats are allowed
+//@allow_channel_chats True, if channel chats are allowed
+targetChatTypes allow_user_chats:Bool allow_bot_chats:Bool allow_group_chats:Bool allow_channel_chats:Bool = TargetChatTypes;
+
+
+//@class TargetChat @description Describes the target chat to be opened
+
+//@description The currently opened chat and forum topic must be kept
+targetChatCurrent = TargetChat;
+
+//@description The chat needs to be chosen by the user among chats of the specified types @types Allowed types for the chat
+targetChatChosen types:targetChatTypes = TargetChat;
+
+//@description The chat needs to be open with the provided internal link @link An internal link pointing to the chat
+targetChatInternalLink link:InternalLinkType = TargetChat;
+
+
 //@class InputInlineQueryResult @description Represents a single result of an inline query; for bots only
 
 //@description Represents a link to an animated GIF or an animated (i.e., without sound) H.264/MPEG-4 AVC video
@@ -5320,6 +5505,18 @@ inlineQueryResultsButton text:string type:InlineQueryResultsButtonType = InlineQ
 //@results Results of the query
 //@next_offset The offset for the next request. If empty, then there are no more results
 inlineQueryResults inline_query_id:int64 button:inlineQueryResultsButton results:vector<InlineQueryResult> next_offset:string = InlineQueryResults;
+
+
+//@description Represents an inline message that can be sent via the bot
+//@id Unique identifier for the message
+//@expiration_date Point in time (Unix timestamp) when the message can't be used anymore
+preparedInlineMessageId id:string expiration_date:int32 = PreparedInlineMessageId;
+
+//@description Represents a ready to send inline message. Use sendInlineQueryResultMessage to send the message
+//@inline_query_id Unique identifier of the inline query to pass to sendInlineQueryResultMessage
+//@result Resulted inline message of the query
+//@chat_types Types of the chats to which the message can be sent
+preparedInlineMessage inline_query_id:int64 result:InlineQueryResult chat_types:targetChatTypes = PreparedInlineMessage;
 
 
 //@class CallbackQueryPayload @description Represents a payload of a callback query
@@ -5832,12 +6029,6 @@ premiumState state:formattedText payment_options:vector<premiumStatePaymentOptio
 
 //@description The user subscribing to Telegram Premium @is_restore Pass true if this is a restore of a Telegram Premium purchase; only for App Store @is_upgrade Pass true if this is an upgrade from a monthly subscription to early subscription; only for App Store
 storePaymentPurposePremiumSubscription is_restore:Bool is_upgrade:Bool = StorePaymentPurpose;
-
-//@description The user gifting Telegram Premium to another user
-//@user_id Identifier of the user to which Telegram Premium is gifted
-//@currency ISO 4217 currency code of the payment currency
-//@amount Paid amount, in the smallest units of the currency
-storePaymentPurposeGiftedPremium user_id:int53 currency:string amount:int53 = StorePaymentPurpose;
 
 //@description The user creating Telegram Premium gift codes for other users
 //@boosted_chat_id Identifier of the supergroup or channel chat, which will be automatically boosted by the users for duration of the Premium subscription and which is administered by the user; 0 if none
@@ -6396,6 +6587,9 @@ userPrivacySettingRuleAllowAll = UserPrivacySettingRule;
 //@description A rule to allow all contacts of the user to do something
 userPrivacySettingRuleAllowContacts = UserPrivacySettingRule;
 
+//@description A rule to allow all bots to do something
+userPrivacySettingRuleAllowBots = UserPrivacySettingRule;
+
 //@description A rule to allow all Premium Users to do something; currently, allowed only for userPrivacySettingAllowChatInvites
 userPrivacySettingRuleAllowPremiumUsers = UserPrivacySettingRule;
 
@@ -6410,6 +6604,9 @@ userPrivacySettingRuleRestrictAll = UserPrivacySettingRule;
 
 //@description A rule to restrict all contacts of the user from doing something
 userPrivacySettingRuleRestrictContacts = UserPrivacySettingRule;
+
+//@description A rule to restrict all bots from doing something
+userPrivacySettingRuleRestrictBots = UserPrivacySettingRule;
 
 //@description A rule to restrict all specified users from doing something @user_ids The user identifiers, total number of users in all rules must not exceed 1000
 userPrivacySettingRuleRestrictUsers user_ids:vector<int53> = UserPrivacySettingRule;
@@ -6455,6 +6652,9 @@ userPrivacySettingAllowFindingByPhoneNumber = UserPrivacySetting;
 
 //@description A privacy setting for managing whether the user can receive voice and video messages in private chats; for Telegram Premium users only
 userPrivacySettingAllowPrivateVoiceAndVideoNoteMessages = UserPrivacySetting;
+
+//@description A privacy setting for managing whether received gifts are automatically shown on the user's profile page
+userPrivacySettingAutosaveGifts = UserPrivacySetting;
 
 
 //@description Contains privacy settings for message read date in private chats. Read dates are always shown to the users that can see online status of the current user regardless of this setting
@@ -6648,22 +6848,6 @@ reportStoryResultOptionRequired title:string options:vector<reportOption> = Repo
 reportStoryResultTextRequired option_id:bytes is_optional:Bool = ReportStoryResult;
 
 
-//@class TargetChat @description Describes the target chat to be opened
-
-//@description The currently opened chat needs to be kept
-targetChatCurrent = TargetChat;
-
-//@description The chat needs to be chosen by the user among chats of the specified types
-//@allow_user_chats True, if private chats with ordinary users are allowed
-//@allow_bot_chats True, if private chats with other bots are allowed
-//@allow_group_chats True, if basic group and supergroup chats are allowed
-//@allow_channel_chats True, if channel chats are allowed
-targetChatChosen allow_user_chats:Bool allow_bot_chats:Bool allow_group_chats:Bool allow_channel_chats:Bool = TargetChat;
-
-//@description The chat needs to be open with the provided internal link @link An internal link pointing to the chat
-targetChatInternalLink link:InternalLinkType = TargetChat;
-
-
 //@class InternalLinkType @description Describes an internal https://t.me or tg: link, which must be processed by the application in a special way
 
 //@description The link is a link to the Devices section of the application. Use getActiveSessions to get the list of active sessions and show them to the user
@@ -6725,6 +6909,11 @@ internalLinkTypeBuyStars star_count:int53 purpose:string = InternalLinkType;
 //@description The link is a link to the change phone number section of the application
 internalLinkTypeChangePhoneNumber = InternalLinkType;
 
+//@description The link is an affiliate program link. Call searchChatAffiliateProgram with the given username and referrer to process the link
+//@username Username to be passed to searchChatAffiliateProgram
+//@referrer Referrer to be passed to searchChatAffiliateProgram
+internalLinkTypeChatAffiliateProgram username:string referrer:string = InternalLinkType;
+
 //@description The link is a link to boost a Telegram chat. Call getChatBoostLinkInfo with the given URL to process the link.
 //-If the chat is found, then call getChatBoostStatus and getAvailableChatBoostSlots to get the current boost status and check whether the chat can be boosted.
 //-If the user wants to boost the chat and the chat can be boosted, then call boostChat
@@ -6777,11 +6966,11 @@ internalLinkTypeLanguageSettings = InternalLinkType;
 //-If the bot can be added to attachment menu, then use getAttachmentMenuBot to receive information about the bot, then if the bot isn't added to side menu,
 //-show a disclaimer about Mini Apps being third-party applications, ask the user to accept their Terms of service and confirm adding the bot to side and attachment menu,
 //-then if the user accepts the terms and confirms adding, use toggleBotIsAddedToAttachmentMenu to add the bot.
-//-Then, use getMainWebApp with the given start parameter and open the returned URL as a Web App
+//-Then, use getMainWebApp with the given start parameter and mode and open the returned URL as a Web App
 //@bot_username Username of the bot
 //@start_parameter Start parameter to be passed to getMainWebApp
-//@is_compact True, if the Web App must be opened in the compact mode instead of the full-size mode
-internalLinkTypeMainWebApp bot_username:string start_parameter:string is_compact:Bool = InternalLinkType;
+//@mode The mode to be passed to getMainWebApp
+internalLinkTypeMainWebApp bot_username:string start_parameter:string mode:WebAppOpenMode = InternalLinkType;
 
 //@description The link is a link to a Telegram message or a forum topic. Call getMessageLinkInfo with the given URL to process the link,
 //-and then open received forum topic or chat and show the message there
@@ -6812,7 +7001,8 @@ internalLinkTypePhoneNumberConfirmation hash:string phone_number:string = Intern
 //@referrer Referrer specified in the link
 internalLinkTypePremiumFeatures referrer:string = InternalLinkType;
 
-//@description The link is a link to the screen for gifting Telegram Premium subscriptions to friends via inputInvoiceTelegram payments or in-store purchases @referrer Referrer specified in the link
+//@description The link is a link to the screen for gifting Telegram Premium subscriptions to friends via inputInvoiceTelegram with telegramPaymentPurposePremiumGiftCodes payments or in-store purchases
+//@referrer Referrer specified in the link
 internalLinkTypePremiumGift referrer:string = InternalLinkType;
 
 //@description The link is a link with a Telegram Premium gift code. Call checkPremiumGiftCode with the given code to process the link.
@@ -6895,8 +7085,8 @@ internalLinkTypeVideoChat chat_username:string invite_hash:string is_live_stream
 //@bot_username Username of the bot that owns the Web App
 //@web_app_short_name Short name of the Web App
 //@start_parameter Start parameter to be passed to getWebAppLinkUrl
-//@is_compact True, if the Web App must be opened in the compact mode instead of the full-size mode
-internalLinkTypeWebApp bot_username:string web_app_short_name:string start_parameter:string is_compact:Bool = InternalLinkType;
+//@mode The mode in which the Web App must be opened
+internalLinkTypeWebApp bot_username:string web_app_short_name:string start_parameter:string mode:WebAppOpenMode = InternalLinkType;
 
 
 //@description Contains an HTTPS link to a message in a supergroup or channel, or a forum topic @link The link @is_public True, if the link will work for non-members of the chat
@@ -6968,6 +7158,18 @@ fileTypeSecretThumbnail = FileType;
 
 //@description The file is a file from Secure storage used for storing Telegram Passport files
 fileTypeSecure = FileType;
+
+//@description The file is a self-destructing photo in a private chat
+fileTypeSelfDestructingPhoto = FileType;
+
+//@description The file is a self-destructing video in a private chat
+fileTypeSelfDestructingVideo = FileType;
+
+//@description The file is a self-destructing video note in a private chat
+fileTypeSelfDestructingVideoNote = FileType;
+
+//@description The file is a self-destructing voice note in a private chat
+fileTypeSelfDestructingVoiceNote = FileType;
 
 //@description The file is a sticker
 fileTypeSticker = FileType;
@@ -7467,12 +7669,12 @@ chatRevenueTransactions total_count:int32 transactions:vector<chatRevenueTransac
 
 
 //@description Contains information about Telegram Stars earned by a bot or a chat
-//@total_count Total number of Telegram Stars earned
-//@current_count The number of Telegram Stars that aren't withdrawn yet
-//@available_count The number of Telegram Stars that are available for withdrawal
+//@total_amount Total amount of Telegram Stars earned
+//@current_amount The amount of Telegram Stars that aren't withdrawn yet
+//@available_amount The amount of Telegram Stars that are available for withdrawal
 //@withdrawal_enabled True, if Telegram Stars can be withdrawn now or later
 //@next_withdrawal_in Time left before the next withdrawal can be started, in seconds; 0 if withdrawal can be started now
-starRevenueStatus total_count:int53 current_count:int53 available_count:int53 withdrawal_enabled:Bool next_withdrawal_in:int32 = StarRevenueStatus;
+starRevenueStatus total_amount:starAmount current_amount:starAmount available_amount:starAmount withdrawal_enabled:Bool next_withdrawal_in:int32 = StarRevenueStatus;
 
 //@description A detailed statistics about Telegram Stars earned by a bot or a chat
 //@revenue_by_day_graph A graph containing amount of revenue in a given day
@@ -7545,7 +7747,10 @@ updateNewMessage message:message = Update;
 //@message_id A temporary message identifier
 updateMessageSendAcknowledged chat_id:int53 message_id:int53 = Update;
 
-//@description A message has been successfully sent @message The sent message. Usually only the message identifier, date, and content are changed, but almost all other fields can also change @old_message_id The previous temporary message identifier
+//@description A message has been successfully sent
+//@message The sent message. Almost any field of the new message can be different from the corresponding field of the original message.
+//-For example, the field scheduling_state may change, making the message scheduled, or non-scheduled
+//@old_message_id The previous temporary message identifier
 updateMessageSendSucceeded message:message old_message_id:int53 = Update;
 
 //@description A message failed to send. Be aware that some messages being sent can be irrecoverably deleted, in which case updateDeleteMessages will be received instead of this update
@@ -7593,6 +7798,11 @@ updateMessageFactCheck chat_id:int53 message_id:int53 fact_check:factCheck = Upd
 //@chat_id Identifier of the chat with the live location message
 //@message_id Identifier of the message with live location
 updateMessageLiveLocationViewed chat_id:int53 message_id:int53 = Update;
+
+//@description An automatically scheduled message with video has been successfully sent after conversion
+//@chat_id Identifier of the chat with the message
+//@message_id Identifier of the sent message
+updateVideoPublished chat_id:int53 message_id:int53 = Update;
 
 //@description A new chat has been loaded/created. This update is guaranteed to come before the chat identifier is returned to the application. The chat field changes will be reported through separate updates @chat The chat
 updateNewChat chat:chat = Update;
@@ -7998,8 +8208,8 @@ updateSavedMessagesTags saved_messages_topic_id:int53 tags:savedMessagesTags = U
 //@messages The list of messages with active live locations
 updateActiveLiveLocationMessages messages:vector<message> = Update;
 
-//@description The number of Telegram Stars owned by the current user has changed @star_count The new number of Telegram Stars owned
-updateOwnedStarCount star_count:int53 = Update;
+//@description The number of Telegram Stars owned by the current user has changed @star_amount The new amount of owned Telegram Stars
+updateOwnedStarCount star_amount:starAmount = Update;
 
 //@description The revenue earned from sponsored messages in a chat has changed. If chat revenue screen is opened, then getChatRevenueTransactions may be called to fetch new transactions
 //@chat_id Identifier of the chat

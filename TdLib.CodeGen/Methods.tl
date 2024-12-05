@@ -1,4 +1,4 @@
-//@description Returns the current authorization state; this is an offline request. For informational purposes only. Use updateAuthorizationState instead to maintain the current authorization state. Can be called before initialization
+﻿//@description Returns the current authorization state; this is an offline request. For informational purposes only. Use updateAuthorizationState instead to maintain the current authorization state. Can be called before initialization
 getAuthorizationState = AuthorizationState;
 
 
@@ -469,10 +469,11 @@ searchOutgoingDocumentMessages query:string limit:int32 = FoundMessages;
 searchPublicMessagesByTag tag:string offset:string limit:int32 = FoundMessages;
 
 //@description Searches for public stories containing the given hashtag or cashtag. For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
+//@story_sender_chat_id Identifier of the chat that posted the stories to search for; pass 0 to search stories in all chats
 //@tag Hashtag or cashtag to search for
 //@offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
 //@limit The maximum number of stories to be returned; up to 100. For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
-searchPublicStoriesByTag tag:string offset:string limit:int32 = FoundStories;
+searchPublicStoriesByTag story_sender_chat_id:int53 tag:string offset:string limit:int32 = FoundStories;
 
 //@description Searches for public stories by the given address location. For optimal performance, the number of returned stories is chosen by TDLib and can be smaller than the specified limit
 //@address Address of the location
@@ -541,7 +542,7 @@ getChatMessagePosition chat_id:int53 message_id:int53 filter:SearchMessagesFilte
 //@description Returns all scheduled messages in a chat. The messages are returned in reverse chronological order (i.e., in order of decreasing message_id) @chat_id Chat identifier
 getChatScheduledMessages chat_id:int53 = Messages;
 
-//@description Returns sponsored messages to be shown in a chat; for channel chats only @chat_id Identifier of the chat
+//@description Returns sponsored messages to be shown in a chat; for channel chats and chats with bots only @chat_id Identifier of the chat
 getChatSponsoredMessages chat_id:int53 = SponsoredMessages;
 
 //@description Informs TDLib that the user opened the sponsored chat via the button, the name, the chat photo, a mention in the sponsored message text, or the media in the sponsored message
@@ -720,11 +721,10 @@ editMessageText chat_id:int53 message_id:int53 reply_markup:ReplyMarkup input_me
 //@proximity_alert_radius The new maximum distance for proximity alerts, in meters (0-100000). Pass 0 if the notification is disabled
 editMessageLiveLocation chat_id:int53 message_id:int53 reply_markup:ReplyMarkup location:location live_period:int32 heading:int32 proximity_alert_radius:int32 = Message;
 
-//@description Edits the content of a message with an animation, an audio, a document, a photo or a video, including message caption. If only the caption needs to be edited, use editMessageCaption instead.
-//-The media can't be edited if the message was set to self-destruct or to a self-destructing media. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa.
-//-Returns the edited message after the edit is completed on the server side
+//@description Edits the media content of a message, including message caption. If only the caption needs to be edited, use editMessageCaption instead.
+//-The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa. Returns the edited message after the edit is completed on the server side
 //@chat_id The chat the message belongs to
-//@message_id Identifier of the message. Use messageProperties.can_be_edited to check whether the message can be edited
+//@message_id Identifier of the message. Use messageProperties.can_edit_media to check whether the message can be edited
 //@reply_markup The new message reply markup; pass null if none; for bots only
 //@input_message_content New content of the message. Must be one of the following types: inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto or inputMessageVideo
 editMessageMedia chat_id:int53 message_id:int53 reply_markup:ReplyMarkup input_message_content:InputMessageContent = Message;
@@ -759,7 +759,7 @@ editInlineMessageText inline_message_id:string reply_markup:ReplyMarkup input_me
 //@proximity_alert_radius The new maximum distance for proximity alerts, in meters (0-100000). Pass 0 if the notification is disabled
 editInlineMessageLiveLocation inline_message_id:string reply_markup:ReplyMarkup location:location live_period:int32 heading:int32 proximity_alert_radius:int32 = Ok;
 
-//@description Edits the content of a message with an animation, an audio, a document, a photo or a video in an inline message sent via a bot; for bots only
+//@description Edits the media content of a message with a text, an animation, an audio, a document, a photo or a video in an inline message sent via a bot; for bots only
 //@inline_message_id Inline message identifier
 //@reply_markup The new message reply markup; pass null if none; for bots only
 //@input_message_content New content of the message. Must be one of the following types: inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto or inputMessageVideo
@@ -780,8 +780,9 @@ editInlineMessageReplyMarkup inline_message_id:string reply_markup:ReplyMarkup =
 //@description Edits the time when a scheduled message will be sent. Scheduling state of all messages in the same album or forwarded together with the message will be also changed
 //@chat_id The chat the message belongs to
 //@message_id Identifier of the message. Use messageProperties.can_edit_scheduling_state to check whether the message is suitable
-//@scheduling_state The new message scheduling state; pass null to send the message immediately
+//@scheduling_state The new message scheduling state; pass null to send the message immediately. Must be null for messages in the state messageSchedulingStateSendWhenVideoProcessed
 editMessageSchedulingState chat_id:int53 message_id:int53 scheduling_state:MessageSchedulingState = Ok;
+
 
 //@description Changes the fact-check of a message. Can be only used if messageProperties.can_set_fact_check == true
 //@chat_id The channel chat the message belongs to
@@ -832,7 +833,7 @@ editBusinessMessageText business_connection_id:string chat_id:int53 message_id:i
 //@proximity_alert_radius The new maximum distance for proximity alerts, in meters (0-100000). Pass 0 if the notification is disabled
 editBusinessMessageLiveLocation business_connection_id:string chat_id:int53 message_id:int53 reply_markup:ReplyMarkup location:location live_period:int32 heading:int32 proximity_alert_radius:int32 = BusinessMessage;
 
-//@description Edits the content of a message with an animation, an audio, a document, a photo or a video in a message sent on behalf of a business account; for bots only
+//@description Edits the media content of a message with a text, an animation, an audio, a document, a photo or a video in a message sent on behalf of a business account; for bots only
 //@business_connection_id Unique identifier of business connection on behalf of which the message was sent
 //@chat_id The chat the message belongs to
 //@message_id Identifier of the message
@@ -925,7 +926,7 @@ addQuickReplyShortcutMessageAlbum shortcut_name:string reply_to_message_id:int53
 readdQuickReplyShortcutMessages shortcut_name:string message_ids:vector<int53> = QuickReplyMessages;
 
 //@description Asynchronously edits the text, media or caption of a quick reply message. Use quickReplyMessage.can_be_edited to check whether a message can be edited.
-//-Text message can be edited only to a text message. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa
+//-Media message can be edited only to a media message. The type of message content in an album can't be changed with exception of replacing a photo with a video or vice versa
 //@shortcut_id Unique identifier of the quick reply shortcut with the message
 //@message_id Identifier of the message
 //@input_message_content New content of the message. Must be one of the following types: inputMessageText, inputMessageAnimation, inputMessageAudio, inputMessageDocument, inputMessagePhoto or inputMessageVideo
@@ -1208,6 +1209,17 @@ getInlineQueryResults bot_user_id:int53 chat_id:int53 user_location:location que
 //@next_offset Offset for the next inline query; pass an empty string if there are no more results
 answerInlineQuery inline_query_id:int64 is_personal:Bool button:inlineQueryResultsButton results:vector<InputInlineQueryResult> cache_time:int32 next_offset:string = Ok;
 
+//@description Saves an inline message to be sent by the given user; for bots only
+//@user_id Identifier of the user
+//@result The description of the message
+//@chat_types Types of the chats to which the message can be sent
+savePreparedInlineMessage user_id:int53 result:InputInlineQueryResult chat_types:targetChatTypes = PreparedInlineMessageId;
+
+//@description Saves an inline message to be sent by the given user
+//@bot_user_id Identifier of the bot that created the message
+//@prepared_message_id Identifier of the prepared message
+getPreparedInlineMessage bot_user_id:int53 prepared_message_id:string = PreparedInlineMessage;
+
 
 //@description Returns the most grossing Web App bots
 //@offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
@@ -1219,30 +1231,30 @@ getGrossingWebAppBots offset:string limit:int32 = FoundUsers;
 //@web_app_short_name Short name of the Web App
 searchWebApp bot_user_id:int53 web_app_short_name:string = FoundWebApp;
 
+//@description Returns a default placeholder for Web Apps of a bot; this is an offline request. Returns a 404 error if the placeholder isn't known @bot_user_id Identifier of the target bot
+getWebAppPlaceholder bot_user_id:int53 = Outline;
+
 //@description Returns an HTTPS URL of a Web App to open after a link of the type internalLinkTypeWebApp is clicked
 //@chat_id Identifier of the chat in which the link was clicked; pass 0 if none
 //@bot_user_id Identifier of the target bot
 //@web_app_short_name Short name of the Web App
 //@start_parameter Start parameter from internalLinkTypeWebApp
-//@theme Preferred Web App theme; pass null to use the default theme
-//@application_name Short name of the current application; 0-64 English letters, digits, and underscores
 //@allow_write_access Pass true if the current user allowed the bot to send them messages
-getWebAppLinkUrl chat_id:int53 bot_user_id:int53 web_app_short_name:string start_parameter:string theme:themeParameters application_name:string allow_write_access:Bool = HttpUrl;
+//@parameters Parameters to use to open the Web App
+getWebAppLinkUrl chat_id:int53 bot_user_id:int53 web_app_short_name:string start_parameter:string allow_write_access:Bool parameters:webAppOpenParameters = HttpUrl;
 
 //@description Returns information needed to open the main Web App of a bot
 //@chat_id Identifier of the chat in which the Web App is opened; pass 0 if none
 //@bot_user_id Identifier of the target bot
 //@start_parameter Start parameter from internalLinkTypeMainWebApp
-//@theme Preferred Web App theme; pass null to use the default theme
-//@application_name Short name of the current application; 0-64 English letters, digits, and underscores
-getMainWebApp chat_id:int53 bot_user_id:int53 start_parameter:string theme:themeParameters application_name:string = MainWebApp;
+//@parameters Parameters to use to open the Web App
+getMainWebApp chat_id:int53 bot_user_id:int53 start_parameter:string parameters:webAppOpenParameters = MainWebApp;
 
 //@description Returns an HTTPS URL of a Web App to open from the side menu, a keyboardButtonTypeWebApp button, or an inlineQueryResultsButtonTypeWebApp button
 //@bot_user_id Identifier of the target bot
 //@url The URL from a keyboardButtonTypeWebApp button, inlineQueryResultsButtonTypeWebApp button, or an empty string when the bot is opened from the side menu
-//@theme Preferred Web App theme; pass null to use the default theme
-//@application_name Short name of the current application; 0-64 English letters, digits, and underscores
-getWebAppUrl bot_user_id:int53 url:string theme:themeParameters application_name:string = HttpUrl;
+//@parameters Parameters to use to open the Web App
+getWebAppUrl bot_user_id:int53 url:string parameters:webAppOpenParameters = HttpUrl;
 
 //@description Sends data received from a keyboardButtonTypeWebApp Web App to a bot
 //@bot_user_id Identifier of the target bot
@@ -1255,11 +1267,10 @@ sendWebAppData bot_user_id:int53 button_text:string data:string = Ok;
 //@chat_id Identifier of the chat in which the Web App is opened. The Web App can't be opened in secret chats
 //@bot_user_id Identifier of the bot, providing the Web App
 //@url The URL from an inlineKeyboardButtonTypeWebApp button, a botMenuButton button, an internalLinkTypeAttachmentMenuBot link, or an empty string otherwise
-//@theme Preferred Web App theme; pass null to use the default theme
-//@application_name Short name of the current application; 0-64 English letters, digits, and underscores
 //@message_thread_id If not 0, the message thread identifier in which the message will be sent
 //@reply_to Information about the message or story to be replied in the message sent by the Web App; pass null if none
-openWebApp chat_id:int53 bot_user_id:int53 url:string theme:themeParameters application_name:string message_thread_id:int53 reply_to:InputMessageReplyTo = WebAppInfo;
+//@parameters Parameters to use to open the Web App
+openWebApp chat_id:int53 bot_user_id:int53 url:string message_thread_id:int53 reply_to:InputMessageReplyTo parameters:webAppOpenParameters = WebAppInfo;
 
 //@description Informs TDLib that a previously opened Web App was closed @web_app_launch_id Identifier of Web App launch, received from openWebApp
 closeWebApp web_app_launch_id:int64 = Ok;
@@ -1268,6 +1279,12 @@ closeWebApp web_app_launch_id:int64 = Ok;
 //@web_app_query_id Identifier of the Web App query
 //@result The result of the query
 answerWebAppQuery web_app_query_id:string result:InputInlineQueryResult = SentWebAppMessage;
+
+//@description Checks whether a file can be downloaded and saved locally by Web App request
+//@bot_user_id Identifier of the bot, providing the Web App
+//@file_name Name of the file
+//@url URL of the file
+checkWebAppFileDownload bot_user_id:int53 file_name:string url:string = Ok;
 
 
 //@description Sends a callback query to a bot and returns an answer. Returns an error with code 502 if the bot fails to answer the query before the query timeout expires
@@ -2201,10 +2218,10 @@ setVideoChatDefaultParticipant chat_id:int53 default_participant_id:MessageSende
 //@chat_id Identifier of a chat in which the video chat will be created
 //@title Group call title; if empty, chat title will be used
 //@start_date Point in time (Unix timestamp) when the group call is expected to be started by an administrator; 0 to start the video chat immediately. The date must be at least 10 seconds and at most 8 days in the future
-//@is_rtmp_stream Pass true to create an RTMP stream instead of an ordinary video chat; requires owner privileges
+//@is_rtmp_stream Pass true to create an RTMP stream instead of an ordinary video chat
 createVideoChat chat_id:int53 title:string start_date:int32 is_rtmp_stream:Bool = GroupCallId;
 
-//@description Returns RTMP URL for streaming to the chat; requires owner privileges @chat_id Chat identifier
+//@description Returns RTMP URL for streaming to the chat; requires can_manage_video_chats administrator right @chat_id Chat identifier
 getVideoChatRtmpUrl chat_id:int53 = RtmpUrl;
 
 //@description Replaces the current RTMP URL for streaming to the chat; requires owner privileges @chat_id Chat identifier
@@ -2389,6 +2406,12 @@ setUserPersonalProfilePhoto user_id:int53 photo:InputChatPhoto = Ok;
 //@description Suggests a profile photo to another regular user with common messages @user_id User identifier @photo Profile photo to suggest; inputChatPhotoPrevious isn't supported in this function
 suggestUserProfilePhoto user_id:int53 photo:InputChatPhoto = Ok;
 
+//@description Toggles whether the bot can manage emoji status of the current user @bot_user_id User identifier of the bot @can_manage_emoji_status Pass true if the bot is allowed to change emoji status of the user; pass false otherwise
+toggleBotCanManageEmojiStatus bot_user_id:int53 can_manage_emoji_status:Bool = Ok;
+
+//@description Changes the emoji status of a user; for bots only @user_id Identifier of the user @emoji_status New emoji status; pass null to switch to the default badge
+setUserEmojiStatus user_id:int53 emoji_status:emojiStatus = Ok;
+
 
 //@description Searches a user by their phone number. Returns a 404 error if the user can't be found
 //@phone_number Phone number to search for
@@ -2402,6 +2425,12 @@ sharePhoneNumber user_id:int53 = Ok;
 //@description Returns the profile photos of a user. Personal and public photo aren't returned @user_id User identifier @offset The number of photos to skip; must be non-negative @limit The maximum number of photos to be returned; up to 100
 getUserProfilePhotos user_id:int53 offset:int32 limit:int32 = ChatPhotos;
 
+
+//@description Returns outline of a sticker; this is an offline request. Returns a 404 error if the outline isn't known
+//@sticker_file_id File identifier of the sticker
+//@for_animated_emoji Pass true to get the outline scaled for animated emoji
+//@for_clicked_animated_emoji_message Pass true to get the outline scaled for clicked animated emoji message
+getStickerOutline sticker_file_id:int32 for_animated_emoji:Bool for_clicked_animated_emoji_message:Bool = Outline;
 
 //@description Returns stickers from the installed sticker sets that correspond to any of the given emoji or can be found by sticker-specific keywords. If the query is non-empty, then favorite, recently used or trending stickers may also be returned
 //@sticker_type Type of the stickers to return
@@ -2419,9 +2448,12 @@ getAllStickerEmojis sticker_type:StickerType query:string chat_id:int53 return_o
 
 //@description Searches for stickers from public sticker sets that correspond to any of the given emoji
 //@sticker_type Type of the stickers to return
-//@emojis Space-separated list of emojis to search for; must be non-empty
+//@emojis Space-separated list of emojis to search for
+//@query Query to search for; may be empty to search for emoji only
+//@input_language_codes List of possible IETF language tags of the user's input language; may be empty if unknown
+//@offset The offset from which to return the stickers; must be non-negative
 //@limit The maximum number of stickers to be returned; 0-100
-searchStickers sticker_type:StickerType emojis:string limit:int32 = Stickers;
+searchStickers sticker_type:StickerType emojis:string query:string input_language_codes:vector<string> offset:int32 limit:int32 = Stickers;
 
 //@description Returns greeting stickers from regular sticker sets that can be used for the start page of other users
 getGreetingStickers = Stickers;
@@ -2550,6 +2582,9 @@ removeSavedAnimation animation:InputFile = Ok;
 
 //@description Returns up to 20 recently used inline bots in the order of their last usage
 getRecentInlineBots = Users;
+
+//@description Returns the list of owned by the current user bots
+getOwnedBots = Users;
 
 
 //@description Searches for recently used hashtags by their prefix @prefix Hashtag prefix to search for @limit The maximum number of hashtags to be returned
@@ -3024,8 +3059,10 @@ toggleGiftIsSaved sender_user_id:int53 message_id:int53 is_saved:Bool = Ok;
 getUserGifts user_id:int53 offset:string limit:int32 = UserGifts;
 
 
-//@description Creates a link for the given invoice; for bots only @invoice Information about the invoice of the type inputMessageInvoice
-createInvoiceLink invoice:InputMessageContent = HttpUrl;
+//@description Creates a link for the given invoice; for bots only
+//@business_connection_id Unique identifier of business connection on behalf of which to send the request
+//@invoice Information about the invoice of the type inputMessageInvoice
+createInvoiceLink business_connection_id:string invoice:InputMessageContent = HttpUrl;
 
 //@description Refunds a previously done payment in Telegram Stars; for bots only
 //@user_id Identifier of the user that did the payment
@@ -3192,15 +3229,20 @@ reportChatPhoto chat_id:int53 file_id:int32 reason:ReportReason text:string = Ok
 reportMessageReactions chat_id:int53 message_id:int53 sender_id:MessageSender = Ok;
 
 
-//@description Returns detailed revenue statistics about a chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true @chat_id Chat identifier @is_dark Pass true if a dark theme is used by the application
+//@description Returns detailed revenue statistics about a chat. Currently, this method can be used only
+//-for channels if supergroupFullInfo.can_get_revenue_statistics == true or bots if userFullInfo.bot_info.can_get_revenue_statistics == true
+//@chat_id Chat identifier
+//@is_dark Pass true if a dark theme is used by the application
 getChatRevenueStatistics chat_id:int53 is_dark:Bool = ChatRevenueStatistics;
 
-//@description Returns a URL for chat revenue withdrawal; requires owner privileges in the chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true and getOption("can_withdraw_chat_revenue")
+//@description Returns a URL for chat revenue withdrawal; requires owner privileges in the channel chat or the bot. Currently, this method can be used only
+//-if getOption("can_withdraw_chat_revenue") for channels with supergroupFullInfo.can_get_revenue_statistics == true or bots with userFullInfo.bot_info.can_get_revenue_statistics == true
 //@chat_id Chat identifier
 //@password The 2-step verification password of the current user
 getChatRevenueWithdrawalUrl chat_id:int53 password:string = HttpUrl;
 
-//@description Returns the list of revenue transactions for a chat. Currently, this method can be used only for channels if supergroupFullInfo.can_get_revenue_statistics == true
+//@description Returns the list of revenue transactions for a chat. Currently, this method can be used only
+//-for channels if supergroupFullInfo.can_get_revenue_statistics == true or bots if userFullInfo.bot_info.can_get_revenue_statistics == true
 //@chat_id Chat identifier
 //@offset Number of transactions to skip
 //@limit The maximum number of transactions to be returned; up to 200
@@ -3527,13 +3569,59 @@ assignAppStoreTransaction receipt:bytes purpose:StorePaymentPurpose = Ok;
 //@purpose Transaction purpose
 assignGooglePlayTransaction package_name:string store_product_id:string purchase_token:string purpose:StorePaymentPurpose = Ok;
 
-//@description Cancels or reenables Telegram Star subscription to a channel
+//@description Cancels or re-enables Telegram Star subscription
 //@subscription_id Identifier of the subscription to change
 //@is_canceled New value of is_canceled
 editStarSubscription subscription_id:string is_canceled:Bool = Ok;
 
-//@description Reuses an active subscription and joins the subscribed chat again @subscription_id Identifier of the subscription
+//@description Cancels or re-enables Telegram Star subscription for a user; for bots only
+//@user_id User identifier
+//@telegram_payment_charge_id Telegram payment identifier of the subscription
+//@is_canceled Pass true to cancel the subscription; pass false to allow the user to enable it
+editUserStarSubscription user_id:int53 telegram_payment_charge_id:string is_canceled:Bool = Ok;
+
+//@description Reuses an active Telegram Star subscription to a channel chat and joins the chat again @subscription_id Identifier of the subscription
 reuseStarSubscription subscription_id:string = Ok;
+
+
+//@description Changes affiliate program for a bot
+//@chat_id Identifier of the chat with an owned bot for which affiliate program is changed
+//@parameters Parameters of the affiliate program; pass null to close the currently active program. If there is an active program, then commission and program duration can only be increased.
+//-If the active program is scheduled to be closed, then it can't be changed anymore
+setChatAffiliateProgram chat_id:int53 parameters:affiliateProgramParameters = Ok;
+
+//@description Searches a chat with an affiliate program. Returns the chat if found and the program is active
+//@username Username of the chat
+//@referrer The referrer from an internalLinkTypeChatAffiliateProgram link
+searchChatAffiliateProgram username:string referrer:string = Chat;
+
+//@description Searches affiliate programs that can be applied to the given chat
+//@chat_id Identifier of the chat for which affiliate programs are searched for. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@sort_order Sort order for the results
+//@offset Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
+//@limit The maximum number of affiliate programs to return
+searchAffiliatePrograms chat_id:int53 sort_order:AffiliateProgramSortOrder offset:string limit:int32 = FoundAffiliatePrograms;
+
+//@description Connects an affiliate program to the given chat. Returns information about the connected affiliate program
+//@chat_id Identifier of the chat to which the affiliate program will be connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@bot_user_id Identifier of the bot, which affiliate program is connected
+connectChatAffiliateProgram chat_id:int53 bot_user_id:int53 = ChatAffiliateProgram;
+
+//@description Disconnects an affiliate program from the given chat and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
+//@chat_id Identifier of the chat for which the affiliate program is connected
+//@url The referral link of the affiliate program
+disconnectChatAffiliateProgram chat_id:int53 url:string = ChatAffiliateProgram;
+
+//@description Returns an affiliate program that were connected to the given chat by identifier of the bot that created the program
+//@chat_id Identifier of the chat for which the affiliate program was connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@bot_user_id Identifier of the bot that created the program
+getChatAffiliateProgram chat_id:int53 bot_user_id:int53 = ChatAffiliateProgram;
+
+//@description Returns affiliate programs that were connected to the given chat
+//@chat_id Identifier of the chat for which the affiliate programs were connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@offset Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
+//@limit The maximum number of affiliate programs to return
+getChatAffiliatePrograms chat_id:int53 offset:string limit:int32 = ChatAffiliatePrograms;
 
 
 //@description Returns information about features, available to Business users @source Source of the request; pass null if the method is called from settings or some non-standard source
