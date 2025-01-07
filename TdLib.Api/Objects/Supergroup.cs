@@ -141,11 +141,11 @@ namespace TdLib
             public bool IsForum { get; set; }
 
             /// <summary>
-            /// True, if the supergroup or channel is verified
+            /// Information about verification status of the supergroup or channel; may be null if none
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_verified")]
-            public bool IsVerified { get; set; }
+            [JsonProperty("verification_status")]
+            public VerificationStatus VerificationStatus { get; set; }
 
             /// <summary>
             /// True, if content of media messages in the supergroup or channel chat must be hidden with 18+ spoiler
@@ -160,20 +160,6 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("restriction_reason")]
             public string RestrictionReason { get; set; }
-
-            /// <summary>
-            /// True, if many users reported this supergroup or channel as a scam
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_scam")]
-            public bool IsScam { get; set; }
-
-            /// <summary>
-            /// True, if many users reported this supergroup or channel as a fake account
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_fake")]
-            public bool IsFake { get; set; }
 
             /// <summary>
             /// True, if the supergroup or channel has non-expired stories available to the current user

@@ -9,18 +9,18 @@ namespace TdLib
     /// </summary>
     public static partial class TdApi
     {
-        public partial class StarTransactionType : Object
+        public partial class CallDiscardReason : Object
         {
             /// <summary>
-            /// The transaction is a purchase of a regular gift to another user; for regular users and bots only
+            /// The call was ended because it has been used successfully to transfer private encryption key for the associated group call
             /// </summary>
-            public class StarTransactionTypeGiftPurchase : StarTransactionType
+            public class CallDiscardReasonAllowGroupCall : CallDiscardReason
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "starTransactionTypeGiftPurchase";
+                public override string DataType { get; set; } = "callDiscardReasonAllowGroupCall";
 
                 /// <summary>
                 /// Extra data attached to the message
@@ -29,18 +29,11 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
-                /// Identifier of the user that received the gift
+                /// Encrypted using the call private key encryption key for the associated group call
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
-                [JsonProperty("user_id")]
-                public long UserId { get; set; }
-
-                /// <summary>
-                /// The gift
-                /// </summary>
-                [JsonConverter(typeof(Converter))]
-                [JsonProperty("gift")]
-                public Gift Gift { get; set; }
+                [JsonProperty("encrypted_group_call_key")]
+                public byte[] EncryptedGroupCallKey { get; set; }
             }
         }
     }

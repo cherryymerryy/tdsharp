@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Describes a call
+        /// Describes a backdrop of an upgraded gift
         /// </summary>
-        public partial class Call : Object
+        public partial class UpgradedGiftBackdrop : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "call";
+            public override string DataType { get; set; } = "upgradedGiftBackdrop";
 
             /// <summary>
             /// Extra data attached to the object
@@ -27,46 +27,46 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Call identifier, not persistent
+            /// Name of the backdrop
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("id")]
-            public int Id { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
 
             /// <summary>
-            /// User identifier of the other call participant
+            /// A color in the center of the backdrop in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("user_id")]
-            public long UserId { get; set; }
+            [JsonProperty("center_color")]
+            public int CenterColor { get; set; }
 
             /// <summary>
-            /// True, if the call is outgoing
+            /// A color on the edges of the backdrop in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_outgoing")]
-            public bool IsOutgoing { get; set; }
+            [JsonProperty("edge_color")]
+            public int EdgeColor { get; set; }
 
             /// <summary>
-            /// True, if the call is a video call
+            /// A color to be applied for the symbol in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_video")]
-            public bool IsVideo { get; set; }
+            [JsonProperty("symbol_color")]
+            public int SymbolColor { get; set; }
 
             /// <summary>
-            /// Call state
+            /// A color for the text on the backdrop in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("state")]
-            public CallState State { get; set; }
+            [JsonProperty("text_color")]
+            public int TextColor { get; set; }
 
             /// <summary>
-            /// Identifier of the group call associated with the call; 0 if the group call isn't created yet. The group call can be received through the method getGroupCall
+            /// The number of upgraded gift that receive this backdrop for each 1000 gifts upgraded
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("group_call_id")]
-            public int GroupCallId { get; set; }
+            [JsonProperty("rarity_per_mille")]
+            public int RarityPerMille { get; set; }
         }
     }
 }

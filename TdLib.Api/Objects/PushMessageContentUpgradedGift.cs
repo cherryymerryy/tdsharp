@@ -9,18 +9,18 @@ namespace TdLib
     /// </summary>
     public static partial class TdApi
     {
-        public partial class StarTransactionType : Object
+        public partial class PushMessageContent : Object
         {
             /// <summary>
-            /// The transaction is a purchase of a regular gift to another user; for regular users and bots only
+            /// A message with an upgraded gift
             /// </summary>
-            public class StarTransactionTypeGiftPurchase : StarTransactionType
+            public class PushMessageContentUpgradedGift : PushMessageContent
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "starTransactionTypeGiftPurchase";
+                public override string DataType { get; set; } = "pushMessageContentUpgradedGift";
 
                 /// <summary>
                 /// Extra data attached to the message
@@ -29,18 +29,11 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
-                /// Identifier of the user that received the gift
+                /// True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
-                [JsonProperty("user_id")]
-                public long UserId { get; set; }
-
-                /// <summary>
-                /// The gift
-                /// </summary>
-                [JsonConverter(typeof(Converter))]
-                [JsonProperty("gift")]
-                public Gift Gift { get; set; }
+                [JsonProperty("is_upgrade")]
+                public bool IsUpgrade { get; set; }
             }
         }
     }

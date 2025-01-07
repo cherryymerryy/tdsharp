@@ -110,25 +110,11 @@ namespace TdLib
             public bool IsPublic { get; set; }
 
             /// <summary>
-            /// True, if the chat is verified
+            /// Information about verification status of the chat; may be null if none
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_verified")]
-            public bool IsVerified { get; set; }
-
-            /// <summary>
-            /// True, if many users reported this chat as a scam
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_scam")]
-            public bool IsScam { get; set; }
-
-            /// <summary>
-            /// True, if many users reported this chat as a fake account
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_fake")]
-            public bool IsFake { get; set; }
+            [JsonProperty("verification_status")]
+            public VerificationStatus VerificationStatus { get; set; }
         }
     }
 }

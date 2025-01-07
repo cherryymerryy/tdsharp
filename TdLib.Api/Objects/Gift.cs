@@ -48,11 +48,18 @@ namespace TdLib
             public long StarCount { get; set; }
 
             /// <summary>
-            /// Number of Telegram Stars that can be claimed by the receiver instead of the gift by default. If the gift was paid with just bought Telegram Stars, then full value can be claimed
+            /// Number of Telegram Stars that can be claimed by the receiver instead of the regular gift by default. If the gift was paid with just bought Telegram Stars, then full value can be claimed
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("default_sell_star_count")]
             public long DefaultSellStarCount { get; set; }
+
+            /// <summary>
+            /// Number of Telegram Stars that must be paid to upgrade the gift; 0 if upgrade isn't possible
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("upgrade_star_count")]
+            public long UpgradeStarCount { get; set; }
 
             /// <summary>
             /// True, if the gift is a birthday gift

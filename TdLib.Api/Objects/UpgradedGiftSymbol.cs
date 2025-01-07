@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Describes a found affiliate program
+        /// Describes a symbol shown on the pattern of an upgraded gift
         /// </summary>
-        public partial class FoundAffiliateProgram : Object
+        public partial class UpgradedGiftSymbol : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "foundAffiliateProgram";
+            public override string DataType { get; set; } = "upgradedGiftSymbol";
 
             /// <summary>
             /// Extra data attached to the object
@@ -27,18 +27,25 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// User identifier of the bot created the program
+            /// Name of the symbol
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("bot_user_id")]
-            public long BotUserId { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
 
             /// <summary>
-            /// Information about the affiliate program
+            /// The sticker representing the upgraded gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("info")]
-            public AffiliateProgramInfo Info { get; set; }
+            [JsonProperty("sticker")]
+            public Sticker Sticker { get; set; }
+
+            /// <summary>
+            /// The number of upgraded gift that receive this symbol for each 1000 gifts upgraded
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("rarity_per_mille")]
+            public int RarityPerMille { get; set; }
         }
     }
 }

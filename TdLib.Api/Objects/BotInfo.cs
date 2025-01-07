@@ -124,6 +124,13 @@ namespace TdLib
             public int WebAppHeaderDarkColor { get; set; }
 
             /// <summary>
+            /// Parameters of the verification that can be provided by the bot; may be null if none or the current user isn't the owner of the bot
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("verification_parameters")]
+            public BotVerificationParameters VerificationParameters { get; set; }
+
+            /// <summary>
             /// True, if the bot's revenue statistics are available to the current user
             /// </summary>
             [JsonConverter(typeof(Converter))]

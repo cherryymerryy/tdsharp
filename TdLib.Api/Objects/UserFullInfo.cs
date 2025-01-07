@@ -153,6 +153,13 @@ namespace TdLib
             public int GroupInCommonCount { get; set; }
 
             /// <summary>
+            /// Information about verification status of the user provided by a bot; may be null if none or unknown
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("bot_verification")]
+            public BotVerification BotVerification { get; set; }
+
+            /// <summary>
             /// Information about business settings for Telegram Business accounts; may be null if none
             /// </summary>
             [JsonConverter(typeof(Converter))]

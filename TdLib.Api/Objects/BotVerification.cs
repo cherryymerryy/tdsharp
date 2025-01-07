@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Represents a list of affiliate programs that were connected to a chat
+        /// Describes verification status provided by a bot
         /// </summary>
-        public partial class ChatAffiliatePrograms : Object
+        public partial class BotVerification : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "chatAffiliatePrograms";
+            public override string DataType { get; set; } = "botVerification";
 
             /// <summary>
             /// Extra data attached to the object
@@ -27,24 +27,25 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// The total number of affiliate programs that were connected to the chat
+            /// Identifier of the bot that provided the verification
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("total_count")]
-            public int TotalCount { get; set; }
+            [JsonProperty("bot_user_id")]
+            public long BotUserId { get; set; }
 
             /// <summary>
-            /// The list of connected affiliate programs
+            /// Identifier of the custom emoji that is used as the verification sign
             /// </summary>
-            [JsonProperty("programs", ItemConverterType = typeof(Converter))]
-            public ChatAffiliateProgram[] Programs { get; set; }
+            [JsonConverter(typeof(Converter.Int64))]
+            [JsonProperty("icon_custom_emoji_id")]
+            public long IconCustomEmojiId { get; set; }
 
             /// <summary>
-            /// The offset for the next request. If empty, then there are no more results
+            /// Custom description of verification reason set by the bot
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("next_offset")]
-            public string NextOffset { get; set; }
+            [JsonProperty("custom_description")]
+            public FormattedText CustomDescription { get; set; }
         }
     }
 }

@@ -9,18 +9,18 @@ namespace TdLib
     /// </summary>
     public static partial class TdApi
     {
-        public partial class StarTransactionType : Object
+        public partial class AffiliateType : Object
         {
             /// <summary>
-            /// The transaction is a purchase of a regular gift to another user; for regular users and bots only
+            /// The affiliate is a channel chat where the current user has can_post_messages administrator right
             /// </summary>
-            public class StarTransactionTypeGiftPurchase : StarTransactionType
+            public class AffiliateTypeChannel : AffiliateType
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "starTransactionTypeGiftPurchase";
+                public override string DataType { get; set; } = "affiliateTypeChannel";
 
                 /// <summary>
                 /// Extra data attached to the message
@@ -29,18 +29,11 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
-                /// Identifier of the user that received the gift
+                /// Identifier of the channel chat
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
-                [JsonProperty("user_id")]
-                public long UserId { get; set; }
-
-                /// <summary>
-                /// The gift
-                /// </summary>
-                [JsonConverter(typeof(Converter))]
-                [JsonProperty("gift")]
-                public Gift Gift { get; set; }
+                [JsonProperty("chat_id")]
+                public long ChatId { get; set; }
             }
         }
     }

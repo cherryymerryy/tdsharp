@@ -35,7 +35,7 @@ namespace TdLib
 
             /// <summary>
             /// Point in time (Unix timestamp) when the affiliate program will be closed; 0 if the affiliate program isn't scheduled to be closed.
-            /// If positive, then the program can't be connected using connectChatAffiliateProgram, but active connections will work until the date
+            /// If positive, then the program can't be connected using connectAffiliateProgram, but active connections will work until the date
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("end_date")]

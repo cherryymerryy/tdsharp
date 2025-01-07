@@ -422,14 +422,14 @@ searchChatMessages chat_id:int53 query:string sender_id:MessageSender from_messa
 //@description Searches for messages in all chats except secret chats. Returns the results in reverse chronological order (i.e., in order of decreasing (date, chat_id, message_id)).
 //-For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
 //@chat_list Chat list in which to search messages; pass null to search in all chats regardless of their chat list. Only Main and Archive chat lists are supported
-//@only_in_channels Pass true to search only for messages in channels
 //@query Query to search for
 //@offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
 //@limit The maximum number of messages to be returned; up to 100. For optimal performance, the number of returned messages is chosen by TDLib and can be smaller than the specified limit
 //@filter Additional filter for messages to search; pass null to search for all messages. Filters searchMessagesFilterMention, searchMessagesFilterUnreadMention, searchMessagesFilterUnreadReaction, searchMessagesFilterFailedToSend, and searchMessagesFilterPinned are unsupported in this function
+//@chat_type_filter Additional filter for type of the chat of the searched messages; pass null to search for messages in all chats
 //@min_date If not 0, the minimum date of the messages to return
 //@max_date If not 0, the maximum date of the messages to return
-searchMessages chat_list:ChatList only_in_channels:Bool query:string offset:string limit:int32 filter:SearchMessagesFilter min_date:int32 max_date:int32 = FoundMessages;
+searchMessages chat_list:ChatList query:string offset:string limit:int32 filter:SearchMessagesFilter chat_type_filter:SearchMessagesChatTypeFilter min_date:int32 max_date:int32 = FoundMessages;
 
 //@description Searches for messages in secret chats. Returns the results in reverse chronological order. For optimal performance, the number of returned messages is chosen by TDLib
 //@chat_id Identifier of the chat in which to search. Specify 0 to search in all secret chats
@@ -2177,8 +2177,12 @@ processChatJoinRequest chat_id:int53 user_id:int53 approve:Bool = Ok;
 processChatJoinRequests chat_id:int53 invite_link:string approve:Bool = Ok;
 
 
-//@description Creates a new call @user_id Identifier of the user to be called @protocol The call protocols supported by the application @is_video Pass true to create a video call
-createCall user_id:int53 protocol:callProtocol is_video:Bool = CallId;
+//@description Creates a new call
+//@user_id Identifier of the user to be called
+//@protocol The call protocols supported by the application
+//@is_video Pass true to create a video call
+//@group_call_id Identifier of the group call to which the user will be added after exchanging private key via the call; pass 0 if none; currently, ignored
+createCall user_id:int53 protocol:callProtocol is_video:Bool group_call_id:int32 = CallId;
 
 //@description Accepts an incoming call @call_id Call identifier @protocol The call protocols supported by the application
 acceptCall call_id:int32 protocol:callProtocol = Ok;
@@ -2220,6 +2224,9 @@ setVideoChatDefaultParticipant chat_id:int53 default_participant_id:MessageSende
 //@start_date Point in time (Unix timestamp) when the group call is expected to be started by an administrator; 0 to start the video chat immediately. The date must be at least 10 seconds and at most 8 days in the future
 //@is_rtmp_stream Pass true to create an RTMP stream instead of an ordinary video chat
 createVideoChat chat_id:int53 title:string start_date:int32 is_rtmp_stream:Bool = GroupCallId;
+
+//@description Creates a group call from a one-to-one call @call_id Call identifier
+createGroupCall call_id:int32 = Ok;
 
 //@description Returns RTMP URL for streaming to the chat; requires can_manage_video_chats administrator right @chat_id Chat identifier
 getVideoChatRtmpUrl chat_id:int53 = RtmpUrl;
@@ -2857,6 +2864,19 @@ setBotInfoShortDescription bot_user_id:int53 language_code:string short_descript
 getBotInfoShortDescription bot_user_id:int53 language_code:string = Text;
 
 
+//@description Changes the verification status of a user or a chat by an owned bot
+//@bot_user_id Identifier of the owned bot, which will verify the user or the chat
+//@verified_id Identifier of the user or the supergroup or channel chat, which will be verified by the bot
+//@custom_description Custom description of verification reason; 0-getOption("bot_verification_custom_description_length_max").
+//-If empty, then "was verified by organization "organization_name"" will be used as description. Can be specified only if the bot is allowed to provide custom description
+setMessageSenderBotVerification bot_user_id:int53 verified_id:MessageSender custom_description:string = Ok;
+
+//@description Removes the verification status of a user or a chat by an owned bot
+//@bot_user_id Identifier of the owned bot, which verified the user or the chat
+//@verified_id Identifier of the user or the supergroup or channel chat, which verification is removed
+removeMessageSenderBotVerification bot_user_id:int53 verified_id:MessageSender = Ok;
+
+
 //@description Returns all active sessions of the current user
 getActiveSessions = Sessions;
 
@@ -3039,7 +3059,8 @@ getAvailableGifts = Gifts;
 //@user_id Identifier of the user that will receive the gift
 //@text Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
 //@is_private Pass true to show the current user as sender and gift text only to the gift receiver; otherwise, everyone will be able to see them
-sendGift gift_id:int64 user_id:int53 text:formattedText is_private:Bool = Ok;
+//@pay_for_upgrade Pass true to additionally pay for the gift upgrade and allow the receiver to upgrade it for free
+sendGift gift_id:int64 user_id:int53 text:formattedText is_private:Bool pay_for_upgrade:Bool = Ok;
 
 //@description Sells a gift received by the current user for Telegram Stars
 //@sender_user_id Identifier of the user that sent the gift
@@ -3052,11 +3073,30 @@ sellGift sender_user_id:int53 message_id:int53 = Ok;
 //@is_saved Pass true to display the gift on the user's profile page; pass false to remove it from the profile page
 toggleGiftIsSaved sender_user_id:int53 message_id:int53 is_saved:Bool = Ok;
 
+//@description Returns examples of possible upgraded gifts for a regular gift @gift_id Identifier of the gift
+getGiftUpgradePreview gift_id:int64 = GiftUpgradePreview;
+
+//@description Upgrades a gift received by the current user. Unless the gift has prepaid_upgrade_star_count > 0, the user must pay gift.upgrade_star_count Telegram Stars for the upgrade
+//@sender_user_id Identifier of the user that sent the gift
+//@message_id Identifier of the message with the gift in the chat with the user
+//@keep_original_details Pass true to keep the original gift text, sender and receiver in the upgraded gift
+upgradeGift sender_user_id:int53 message_id:int53 keep_original_details:Bool = UpgradeGiftResult;
+
+//@description Sends a gift upgraded by the current user to another user
+//@sender_user_id Identifier of the user that sent the gift
+//@message_id Identifier of the message with the upgraded gift in the chat with the user
+//@receiver_user_id Identifier of the user that will receive the gift
+//@star_count The amount of Telegram Stars required for the transfer
+transferGift sender_user_id:int53 message_id:int53 receiver_user_id:int53 star_count:int53 = Ok;
+
 //@description Returns gifts saved to profile by the given user
 //@user_id Identifier of the user
 //@offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
 //@limit The maximum number of gifts to be returned; must be positive and can't be greater than 100. For optimal performance, the number of returned objects is chosen by TDLib and can be smaller than the specified limit
 getUserGifts user_id:int53 offset:string limit:int32 = UserGifts;
+
+//@description Returns information about a gift received or sent by the current user @message_id Identifier of the message with the gift
+getUserGift message_id:int53 = UserGift;
 
 
 //@description Creates a link for the given invoice; for bots only
@@ -3595,33 +3635,33 @@ setChatAffiliateProgram chat_id:int53 parameters:affiliateProgramParameters = Ok
 //@referrer The referrer from an internalLinkTypeChatAffiliateProgram link
 searchChatAffiliateProgram username:string referrer:string = Chat;
 
-//@description Searches affiliate programs that can be applied to the given chat
-//@chat_id Identifier of the chat for which affiliate programs are searched for. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@description Searches affiliate programs that can be connected to the given affiliate
+//@affiliate The affiliate for which affiliate programs are searched for
 //@sort_order Sort order for the results
 //@offset Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
 //@limit The maximum number of affiliate programs to return
-searchAffiliatePrograms chat_id:int53 sort_order:AffiliateProgramSortOrder offset:string limit:int32 = FoundAffiliatePrograms;
+searchAffiliatePrograms affiliate:AffiliateType sort_order:AffiliateProgramSortOrder offset:string limit:int32 = FoundAffiliatePrograms;
 
-//@description Connects an affiliate program to the given chat. Returns information about the connected affiliate program
-//@chat_id Identifier of the chat to which the affiliate program will be connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@description Connects an affiliate program to the given affiliate. Returns information about the connected affiliate program
+//@affiliate The affiliate to which the affiliate program will be connected
 //@bot_user_id Identifier of the bot, which affiliate program is connected
-connectChatAffiliateProgram chat_id:int53 bot_user_id:int53 = ChatAffiliateProgram;
+connectAffiliateProgram affiliate:AffiliateType bot_user_id:int53 = ConnectedAffiliateProgram;
 
-//@description Disconnects an affiliate program from the given chat and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
-//@chat_id Identifier of the chat for which the affiliate program is connected
+//@description Disconnects an affiliate program from the given affiliate and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
+//@affiliate The affiliate to which the affiliate program is connected
 //@url The referral link of the affiliate program
-disconnectChatAffiliateProgram chat_id:int53 url:string = ChatAffiliateProgram;
+disconnectAffiliateProgram affiliate:AffiliateType url:string = ConnectedAffiliateProgram;
 
-//@description Returns an affiliate program that were connected to the given chat by identifier of the bot that created the program
-//@chat_id Identifier of the chat for which the affiliate program was connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@description Returns an affiliate program that were connected to the given affiliate by identifier of the bot that created the program
+//@affiliate The affiliate to which the affiliate program will be connected
 //@bot_user_id Identifier of the bot that created the program
-getChatAffiliateProgram chat_id:int53 bot_user_id:int53 = ChatAffiliateProgram;
+getConnectedAffiliateProgram affiliate:AffiliateType bot_user_id:int53 = ConnectedAffiliateProgram;
 
-//@description Returns affiliate programs that were connected to the given chat
-//@chat_id Identifier of the chat for which the affiliate programs were connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+//@description Returns affiliate programs that were connected to the given affiliate
+//@affiliate The affiliate to which the affiliate program were connected
 //@offset Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
 //@limit The maximum number of affiliate programs to return
-getChatAffiliatePrograms chat_id:int53 offset:string limit:int32 = ChatAffiliatePrograms;
+getConnectedAffiliatePrograms affiliate:AffiliateType offset:string limit:int32 = ConnectedAffiliatePrograms;
 
 
 //@description Returns information about features, available to Business users @source Source of the request; pass null if the method is called from settings or some non-standard source

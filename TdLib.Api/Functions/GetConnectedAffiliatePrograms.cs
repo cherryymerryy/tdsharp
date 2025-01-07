@@ -11,15 +11,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Returns affiliate programs that were connected to the given chat
+        /// Returns affiliate programs that were connected to the given affiliate
         /// </summary>
-        public class GetChatAffiliatePrograms : Function<ChatAffiliatePrograms>
+        public class GetConnectedAffiliatePrograms : Function<ConnectedAffiliatePrograms>
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "getChatAffiliatePrograms";
+            public override string DataType { get; set; } = "getConnectedAffiliatePrograms";
 
             /// <summary>
             /// Extra data attached to the function
@@ -28,11 +28,11 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the chat for which the affiliate programs were connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+            /// The affiliate to which the affiliate program were connected
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("chat_id")]
-            public long ChatId { get; set; }
+            [JsonProperty("affiliate")]
+            public AffiliateType Affiliate { get; set; }
 
             /// <summary>
             /// Offset of the first affiliate program to return as received from the previous request; use empty string to get the first chunk of results
@@ -50,14 +50,14 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Returns affiliate programs that were connected to the given chat
+        /// Returns affiliate programs that were connected to the given affiliate
         /// </summary>
-        public static Task<ChatAffiliatePrograms> GetChatAffiliateProgramsAsync(
-            this Client client, long chatId = default, string offset = default, int limit = default)
+        public static Task<ConnectedAffiliatePrograms> GetConnectedAffiliateProgramsAsync(
+            this Client client, AffiliateType affiliate = default, string offset = default, int limit = default)
         {
-            return client.ExecuteAsync(new GetChatAffiliatePrograms
+            return client.ExecuteAsync(new GetConnectedAffiliatePrograms
             {
-                ChatId = chatId, Offset = offset, Limit = limit
+                Affiliate = affiliate, Offset = offset, Limit = limit
             });
         }
     }

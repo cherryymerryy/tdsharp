@@ -54,17 +54,24 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_private")]
             public bool IsPrivate { get; set; }
+
+            /// <summary>
+            /// Pass true to additionally pay for the gift upgrade and allow the receiver to upgrade it for free
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("pay_for_upgrade")]
+            public bool PayForUpgrade { get; set; }
         }
 
         /// <summary>
         /// Sends a gift to another user. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
         /// </summary>
         public static Task<Ok> SendGiftAsync(
-            this Client client, long giftId = default, long userId = default, FormattedText text = default, bool isPrivate = default)
+            this Client client, long giftId = default, long userId = default, FormattedText text = default, bool isPrivate = default, bool payForUpgrade = default)
         {
             return client.ExecuteAsync(new SendGift
             {
-                GiftId = giftId, UserId = userId, Text = text, IsPrivate = isPrivate
+                GiftId = giftId, UserId = userId, Text = text, IsPrivate = isPrivate, PayForUpgrade = payForUpgrade
             });
         }
     }

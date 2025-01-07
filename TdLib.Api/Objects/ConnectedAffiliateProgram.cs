@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Describes an affiliate program that was connected to a chat
+        /// Describes an affiliate program that was connected to an affiliate
         /// </summary>
-        public partial class ChatAffiliateProgram : Object
+        public partial class ConnectedAffiliateProgram : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "chatAffiliateProgram";
+            public override string DataType { get; set; } = "connectedAffiliateProgram";
 
             /// <summary>
             /// Extra data attached to the object

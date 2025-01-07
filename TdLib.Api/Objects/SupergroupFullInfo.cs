@@ -244,6 +244,13 @@ namespace TdLib
             public BotCommands[] BotCommands { get; set; }
 
             /// <summary>
+            /// Information about verification status of the supergroup or the channel provided by a bot; may be null if none or unknown
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("bot_verification")]
+            public BotVerification BotVerification { get; set; }
+
+            /// <summary>
             /// Identifier of the basic group from which supergroup was upgraded; 0 if none
             /// </summary>
             [JsonConverter(typeof(Converter))]

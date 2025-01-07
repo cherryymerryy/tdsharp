@@ -48,11 +48,32 @@ namespace TdLib
             public bool IsPrivate { get; set; }
 
             /// <summary>
-            /// True, if the gift is displayed on the user's profile page; may be false only for the receiver of the gift
+            /// True, if the gift is displayed on the user's profile page; only for the receiver of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_saved")]
             public bool IsSaved { get; set; }
+
+            /// <summary>
+            /// True, if the gift is a regular gift that can be upgraded to a unique gift; only for the receiver of the gift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("can_be_upgraded")]
+            public bool CanBeUpgraded { get; set; }
+
+            /// <summary>
+            /// True, if the gift is an upgraded gift that can be transferred to another user; only for the receiver of the gift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("can_be_transferred")]
+            public bool CanBeTransferred { get; set; }
+
+            /// <summary>
+            /// True, if the gift was refunded and isn't available anymore
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("was_refunded")]
+            public bool WasRefunded { get; set; }
 
             /// <summary>
             /// Point in time (Unix timestamp) when the gift was sent
@@ -66,21 +87,42 @@ namespace TdLib
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("gift")]
-            public Gift Gift { get; set; }
+            public SentGift Gift { get; set; }
 
             /// <summary>
-            /// Identifier of the message with the gift in the chat with the sender of the gift; can be 0 or an identifier of a deleted message; only for the gift receiver
+            /// Identifier of the message with the gift in the chat with the sender of the gift; can be 0 or an identifier of a deleted message; only for the receiver of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("message_id")]
             public long MessageId { get; set; }
 
             /// <summary>
-            /// Number of Telegram Stars that can be claimed by the receiver instead of the gift; 0 if the gift can't be sold by the current user
+            /// Number of Telegram Stars that can be claimed by the receiver instead of the regular gift; 0 if the gift can't be sold by the current user
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("sell_star_count")]
             public long SellStarCount { get; set; }
+
+            /// <summary>
+            /// Number of Telegram Stars that were paid by the sender for the ability to upgrade the gift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("prepaid_upgrade_star_count")]
+            public long PrepaidUpgradeStarCount { get; set; }
+
+            /// <summary>
+            /// Number of Telegram Stars that must be paid to transfer the upgraded gift; only for the receiver of the gift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("transfer_star_count")]
+            public long TransferStarCount { get; set; }
+
+            /// <summary>
+            /// Point in time (Unix timestamp) when the upgraded gift can be transferred to TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("export_date")]
+            public int ExportDate { get; set; }
         }
     }
 }

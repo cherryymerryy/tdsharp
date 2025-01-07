@@ -11,15 +11,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Returns an affiliate program that were connected to the given chat by identifier of the bot that created the program
+        /// Returns an affiliate program that were connected to the given affiliate by identifier of the bot that created the program
         /// </summary>
-        public class GetChatAffiliateProgram : Function<ChatAffiliateProgram>
+        public class GetConnectedAffiliateProgram : Function<ConnectedAffiliateProgram>
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "getChatAffiliateProgram";
+            public override string DataType { get; set; } = "getConnectedAffiliateProgram";
 
             /// <summary>
             /// Extra data attached to the function
@@ -28,11 +28,11 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the chat for which the affiliate program was connected. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+            /// The affiliate to which the affiliate program will be connected
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("chat_id")]
-            public long ChatId { get; set; }
+            [JsonProperty("affiliate")]
+            public AffiliateType Affiliate { get; set; }
 
             /// <summary>
             /// Identifier of the bot that created the program
@@ -43,14 +43,14 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Returns an affiliate program that were connected to the given chat by identifier of the bot that created the program
+        /// Returns an affiliate program that were connected to the given affiliate by identifier of the bot that created the program
         /// </summary>
-        public static Task<ChatAffiliateProgram> GetChatAffiliateProgramAsync(
-            this Client client, long chatId = default, long botUserId = default)
+        public static Task<ConnectedAffiliateProgram> GetConnectedAffiliateProgramAsync(
+            this Client client, AffiliateType affiliate = default, long botUserId = default)
         {
-            return client.ExecuteAsync(new GetChatAffiliateProgram
+            return client.ExecuteAsync(new GetConnectedAffiliateProgram
             {
-                ChatId = chatId, BotUserId = botUserId
+                Affiliate = affiliate, BotUserId = botUserId
             });
         }
     }

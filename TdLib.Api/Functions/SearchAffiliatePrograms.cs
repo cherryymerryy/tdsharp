@@ -11,7 +11,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Searches affiliate programs that can be applied to the given chat
+        /// Searches affiliate programs that can be connected to the given affiliate
         /// </summary>
         public class SearchAffiliatePrograms : Function<FoundAffiliatePrograms>
         {
@@ -28,11 +28,11 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the chat for which affiliate programs are searched for. Can be an identifier of the Saved Messages chat, of a chat with an owned bot, or of a channel chat with can_post_messages administrator right
+            /// The affiliate for which affiliate programs are searched for
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("chat_id")]
-            public long ChatId { get; set; }
+            [JsonProperty("affiliate")]
+            public AffiliateType Affiliate { get; set; }
 
             /// <summary>
             /// Sort order for the results
@@ -57,14 +57,14 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Searches affiliate programs that can be applied to the given chat
+        /// Searches affiliate programs that can be connected to the given affiliate
         /// </summary>
         public static Task<FoundAffiliatePrograms> SearchAffiliateProgramsAsync(
-            this Client client, long chatId = default, AffiliateProgramSortOrder sortOrder = default, string offset = default, int limit = default)
+            this Client client, AffiliateType affiliate = default, AffiliateProgramSortOrder sortOrder = default, string offset = default, int limit = default)
         {
             return client.ExecuteAsync(new SearchAffiliatePrograms
             {
-                ChatId = chatId, SortOrder = sortOrder, Offset = offset, Limit = limit
+                Affiliate = affiliate, SortOrder = sortOrder, Offset = offset, Limit = limit
             });
         }
     }

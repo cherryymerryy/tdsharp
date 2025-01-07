@@ -12,7 +12,7 @@ namespace TdLib
         public partial class MessageContent : Object
         {
             /// <summary>
-            /// A gift was received or sent by the current user
+            /// A regular gift was received or sent by the current user
             /// </summary>
             public class MessageGift : MessageContent
             {
@@ -43,11 +43,18 @@ namespace TdLib
                 public FormattedText Text { get; set; }
 
                 /// <summary>
-                /// Number of Telegram Stars that can be claimed by the receiver instead of the gift; 0 if the gift can't be sold by the receiver
+                /// Number of Telegram Stars that can be claimed by the receiver instead of the regular gift; 0 if the gift can't be sold by the receiver
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("sell_star_count")]
                 public long SellStarCount { get; set; }
+
+                /// <summary>
+                /// Number of Telegram Stars that were paid by the sender for the ability to upgrade the gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("prepaid_upgrade_star_count")]
+                public long PrepaidUpgradeStarCount { get; set; }
 
                 /// <summary>
                 /// True, if the sender and gift text are shown only to the gift receiver; otherwise, everyone will be able to see them
@@ -64,11 +71,39 @@ namespace TdLib
                 public bool IsSaved { get; set; }
 
                 /// <summary>
+                /// True, if the gift can be upgraded to a unique gift; only for the receiver of the gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("can_be_upgraded")]
+                public bool CanBeUpgraded { get; set; }
+
+                /// <summary>
                 /// True, if the gift was converted to Telegram Stars; only for the receiver of the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("was_converted")]
                 public bool WasConverted { get; set; }
+
+                /// <summary>
+                /// True, if the gift was upgraded to a unique gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("was_upgraded")]
+                public bool WasUpgraded { get; set; }
+
+                /// <summary>
+                /// True, if the gift was refunded and isn't available anymore
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("was_refunded")]
+                public bool WasRefunded { get; set; }
+
+                /// <summary>
+                /// Identifier of the service message messageUpgradedGift or messageRefundedUpgradedGift with upgraded version of the gift; can be 0 if none or an identifier of a deleted message.
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("upgrade_message_id")]
+                public long UpgradeMessageId { get; set; }
             }
         }
     }

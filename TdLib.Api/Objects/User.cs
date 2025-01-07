@@ -132,11 +132,11 @@ namespace TdLib
             public bool IsCloseFriend { get; set; }
 
             /// <summary>
-            /// True, if the user is verified
+            /// Information about verification status of the user; may be null if none
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_verified")]
-            public bool IsVerified { get; set; }
+            [JsonProperty("verification_status")]
+            public VerificationStatus VerificationStatus { get; set; }
 
             /// <summary>
             /// True, if the user is a Telegram Premium user
@@ -158,20 +158,6 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("restriction_reason")]
             public string RestrictionReason { get; set; }
-
-            /// <summary>
-            /// True, if many users reported this user as a scam
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_scam")]
-            public bool IsScam { get; set; }
-
-            /// <summary>
-            /// True, if many users reported this user as a fake account
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("is_fake")]
-            public bool IsFake { get; set; }
 
             /// <summary>
             /// True, if the user has non-expired stories available to the current user

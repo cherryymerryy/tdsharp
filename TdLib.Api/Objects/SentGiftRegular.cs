@@ -9,31 +9,24 @@ namespace TdLib
     /// </summary>
     public static partial class TdApi
     {
-        public partial class StarTransactionType : Object
+        public partial class SentGift : Object
         {
             /// <summary>
-            /// The transaction is a purchase of a regular gift to another user; for regular users and bots only
+            /// Represents a gift received by a user
             /// </summary>
-            public class StarTransactionTypeGiftPurchase : StarTransactionType
+            public class SentGiftRegular : SentGift
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "starTransactionTypeGiftPurchase";
+                public override string DataType { get; set; } = "sentGiftRegular";
 
                 /// <summary>
                 /// Extra data attached to the message
                 /// </summary>
                 [JsonProperty("@extra")]
                 public override string Extra { get; set; }
-
-                /// <summary>
-                /// Identifier of the user that received the gift
-                /// </summary>
-                [JsonConverter(typeof(Converter))]
-                [JsonProperty("user_id")]
-                public long UserId { get; set; }
 
                 /// <summary>
                 /// The gift

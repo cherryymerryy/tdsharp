@@ -11,15 +11,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Disconnects an affiliate program from the given chat and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
+        /// Disconnects an affiliate program from the given affiliate and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
         /// </summary>
-        public class DisconnectChatAffiliateProgram : Function<ChatAffiliateProgram>
+        public class DisconnectAffiliateProgram : Function<ConnectedAffiliateProgram>
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "disconnectChatAffiliateProgram";
+            public override string DataType { get; set; } = "disconnectAffiliateProgram";
 
             /// <summary>
             /// Extra data attached to the function
@@ -28,11 +28,11 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the chat for which the affiliate program is connected
+            /// The affiliate to which the affiliate program is connected
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("chat_id")]
-            public long ChatId { get; set; }
+            [JsonProperty("affiliate")]
+            public AffiliateType Affiliate { get; set; }
 
             /// <summary>
             /// The referral link of the affiliate program
@@ -43,14 +43,14 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Disconnects an affiliate program from the given chat and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
+        /// Disconnects an affiliate program from the given affiliate and immediately deactivates its referral link. Returns updated information about the disconnected affiliate program
         /// </summary>
-        public static Task<ChatAffiliateProgram> DisconnectChatAffiliateProgramAsync(
-            this Client client, long chatId = default, string url = default)
+        public static Task<ConnectedAffiliateProgram> DisconnectAffiliateProgramAsync(
+            this Client client, AffiliateType affiliate = default, string url = default)
         {
-            return client.ExecuteAsync(new DisconnectChatAffiliateProgram
+            return client.ExecuteAsync(new DisconnectAffiliateProgram
             {
-                ChatId = chatId, Url = url
+                Affiliate = affiliate, Url = url
             });
         }
     }

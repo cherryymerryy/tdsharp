@@ -12,15 +12,15 @@ namespace TdLib
         public partial class StarTransactionType : Object
         {
             /// <summary>
-            /// The transaction is a purchase of a regular gift to another user; for regular users and bots only
+            /// The transaction is an upgrade of a gift; for regular users only
             /// </summary>
-            public class StarTransactionTypeGiftPurchase : StarTransactionType
+            public class StarTransactionTypeGiftUpgrade : StarTransactionType
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "starTransactionTypeGiftPurchase";
+                public override string DataType { get; set; } = "starTransactionTypeGiftUpgrade";
 
                 /// <summary>
                 /// Extra data attached to the message
@@ -29,18 +29,11 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
-                /// Identifier of the user that received the gift
-                /// </summary>
-                [JsonConverter(typeof(Converter))]
-                [JsonProperty("user_id")]
-                public long UserId { get; set; }
-
-                /// <summary>
-                /// The gift
+                /// The upgraded gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("gift")]
-                public Gift Gift { get; set; }
+                public UpgradedGift Gift { get; set; }
             }
         }
     }
