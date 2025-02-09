@@ -12,7 +12,7 @@ namespace TdLib
         public partial class MessageContent : Object
         {
             /// <summary>
-            /// A regular gift was received or sent by the current user
+            /// A regular gift was received or sent by the current user, or the current user was notified about a channel gift
             /// </summary>
             public class MessageGift : MessageContent
             {
@@ -34,6 +34,20 @@ namespace TdLib
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("gift")]
                 public Gift Gift { get; set; }
+
+                /// <summary>
+                /// Sender of the gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("sender_id")]
+                public MessageSender SenderId { get; set; }
+
+                /// <summary>
+                /// Unique identifier of the received gift for the current user; only for the receiver of the gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("received_gift_id")]
+                public string ReceivedGiftId { get; set; }
 
                 /// <summary>
                 /// Message added to the gift
@@ -64,7 +78,7 @@ namespace TdLib
                 public bool IsPrivate { get; set; }
 
                 /// <summary>
-                /// True, if the gift is displayed on the user's profile page; only for the receiver of the gift
+                /// True, if the gift is displayed on the user's or the channel's profile page; only for the receiver of the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("is_saved")]
@@ -99,11 +113,11 @@ namespace TdLib
                 public bool WasRefunded { get; set; }
 
                 /// <summary>
-                /// Identifier of the service message messageUpgradedGift or messageRefundedUpgradedGift with upgraded version of the gift; can be 0 if none or an identifier of a deleted message.
+                /// Identifier of the corresponding upgraded gift; may be empty if unknown. Use getReceivedGift to get information about the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
-                [JsonProperty("upgrade_message_id")]
-                public long UpgradeMessageId { get; set; }
+                [JsonProperty("upgraded_received_gift_id")]
+                public string UpgradedReceivedGiftId { get; set; }
             }
         }
     }

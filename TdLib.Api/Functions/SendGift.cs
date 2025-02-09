@@ -11,7 +11,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Sends a gift to another user. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
+        /// Sends a gift to another user or channel chat. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
         /// </summary>
         public class SendGift : Function<Ok>
         {
@@ -35,11 +35,11 @@ namespace TdLib
             public long GiftId { get; set; }
 
             /// <summary>
-            /// Identifier of the user that will receive the gift
+            /// Identifier of the user or the channel chat that will receive the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("user_id")]
-            public long UserId { get; set; }
+            [JsonProperty("owner_id")]
+            public MessageSender OwnerId { get; set; }
 
             /// <summary>
             /// Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
@@ -49,7 +49,7 @@ namespace TdLib
             public FormattedText Text { get; set; }
 
             /// <summary>
-            /// Pass true to show the current user as sender and gift text only to the gift receiver; otherwise, everyone will be able to see them
+            /// Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_private")]
@@ -64,14 +64,14 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Sends a gift to another user. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
+        /// Sends a gift to another user or channel chat. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
         /// </summary>
         public static Task<Ok> SendGiftAsync(
-            this Client client, long giftId = default, long userId = default, FormattedText text = default, bool isPrivate = default, bool payForUpgrade = default)
+            this Client client, long giftId = default, MessageSender ownerId = default, FormattedText text = default, bool isPrivate = default, bool payForUpgrade = default)
         {
             return client.ExecuteAsync(new SendGift
             {
-                GiftId = giftId, UserId = userId, Text = text, IsPrivate = isPrivate, PayForUpgrade = payForUpgrade
+                GiftId = giftId, OwnerId = ownerId, Text = text, IsPrivate = isPrivate, PayForUpgrade = payForUpgrade
             });
         }
     }

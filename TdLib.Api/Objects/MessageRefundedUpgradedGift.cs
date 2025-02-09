@@ -36,6 +36,13 @@ namespace TdLib
                 public Gift Gift { get; set; }
 
                 /// <summary>
+                /// Sender of the gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("sender_id")]
+                public MessageSender SenderId { get; set; }
+
+                /// <summary>
                 /// True, if the gift was obtained by upgrading of a previously received gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]

@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Describes the original details about the gift
+        /// Describes colors of a backdrop of an upgraded gift
         /// </summary>
-        public partial class UpgradedGiftOriginalDetails : Object
+        public partial class UpgradedGiftBackdropColors : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "upgradedGiftOriginalDetails";
+            public override string DataType { get; set; } = "upgradedGiftBackdropColors";
 
             /// <summary>
             /// Extra data attached to the object
@@ -27,32 +27,32 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the user or the chat that sent the gift; may be null if the gift was private
+            /// A color in the center of the backdrop in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("sender_id")]
-            public MessageSender SenderId { get; set; }
+            [JsonProperty("center_color")]
+            public int CenterColor { get; set; }
 
             /// <summary>
-            /// Identifier of the user or the chat that received the gift
+            /// A color on the edges of the backdrop in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("receiver_id")]
-            public MessageSender ReceiverId { get; set; }
+            [JsonProperty("edge_color")]
+            public int EdgeColor { get; set; }
 
             /// <summary>
-            /// Message added to the gift
+            /// A color to be applied for the symbol in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("text")]
-            public FormattedText Text { get; set; }
+            [JsonProperty("symbol_color")]
+            public int SymbolColor { get; set; }
 
             /// <summary>
-            /// Point in time (Unix timestamp) when the gift was sent
+            /// A color for the text on the backdrop in the RGB format
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("date")]
-            public int Date { get; set; }
+            [JsonProperty("text_color")]
+            public int TextColor { get; set; }
         }
     }
 }

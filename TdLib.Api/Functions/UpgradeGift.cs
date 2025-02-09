@@ -11,7 +11,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Upgrades a gift received by the current user. Unless the gift has prepaid_upgrade_star_count &gt; 0, the user must pay gift.upgrade_star_count Telegram Stars for the upgrade
+        /// Upgrades a regular gift
         /// </summary>
         public class UpgradeGift : Function<UpgradeGiftResult>
         {
@@ -28,18 +28,11 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the user that sent the gift
+            /// Identifier of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("sender_user_id")]
-            public long SenderUserId { get; set; }
-
-            /// <summary>
-            /// Identifier of the message with the gift in the chat with the user
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("message_id")]
-            public long MessageId { get; set; }
+            [JsonProperty("received_gift_id")]
+            public string ReceivedGiftId { get; set; }
 
             /// <summary>
             /// Pass true to keep the original gift text, sender and receiver in the upgraded gift
@@ -47,17 +40,24 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("keep_original_details")]
             public bool KeepOriginalDetails { get; set; }
+
+            /// <summary>
+            /// The amount of Telegram Stars required to pay for the upgrade. It the gift has prepaid_upgrade_star_count &gt; 0, then pass 0, otherwise, pass gift.upgrade_star_count
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("star_count")]
+            public long StarCount { get; set; }
         }
 
         /// <summary>
-        /// Upgrades a gift received by the current user. Unless the gift has prepaid_upgrade_star_count &gt; 0, the user must pay gift.upgrade_star_count Telegram Stars for the upgrade
+        /// Upgrades a regular gift
         /// </summary>
         public static Task<UpgradeGiftResult> UpgradeGiftAsync(
-            this Client client, long senderUserId = default, long messageId = default, bool keepOriginalDetails = default)
+            this Client client, string receivedGiftId = default, bool keepOriginalDetails = default, long starCount = default)
         {
             return client.ExecuteAsync(new UpgradeGift
             {
-                SenderUserId = senderUserId, MessageId = messageId, KeepOriginalDetails = keepOriginalDetails
+                ReceivedGiftId = receivedGiftId, KeepOriginalDetails = keepOriginalDetails, StarCount = starCount
             });
         }
     }

@@ -10,7 +10,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Describes a gift that can be sent to another user
+        /// Describes a gift that can be sent to another user or channel chat
         /// </summary>
         public partial class Gift : Object
         {
@@ -69,14 +69,14 @@ namespace TdLib
             public bool IsForBirthday { get; set; }
 
             /// <summary>
-            /// Number of remaining times the gift can be purchased by all users; 0 if not limited or the gift was sold out
+            /// Number of remaining times the gift can be purchased; 0 if not limited or the gift was sold out
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("remaining_count")]
             public int RemainingCount { get; set; }
 
             /// <summary>
-            /// Number of total times the gift can be purchased by all users; 0 if not limited
+            /// Number of total times the gift can be purchased; 0 if not limited
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("total_count")]

@@ -43,6 +43,20 @@ namespace TdLib
                 public InputThumbnail Thumbnail { get; set; }
 
                 /// <summary>
+                /// Cover of the video; pass null to skip cover uploading; not supported in secret chats and for self-destructing messages
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("cover")]
+                public InputFile Cover { get; set; }
+
+                /// <summary>
+                /// Timestamp from which the video playing must start, in seconds
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("start_timestamp")]
+                public int StartTimestamp { get; set; }
+
+                /// <summary>
                 /// File identifiers of the stickers added to the video, if applicable
                 /// </summary>
                 [JsonProperty("added_sticker_file_ids", ItemConverterType = typeof(Converter))]

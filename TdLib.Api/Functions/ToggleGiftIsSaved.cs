@@ -11,7 +11,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Toggles whether a gift is shown on the current user's profile page
+        /// Toggles whether a gift is shown on the current user's or the channel's profile page; requires can_post_messages administrator right in the chat
         /// </summary>
         public class ToggleGiftIsSaved : Function<Ok>
         {
@@ -28,21 +28,14 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the user that sent the gift
+            /// Identifier of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("sender_user_id")]
-            public long SenderUserId { get; set; }
+            [JsonProperty("received_gift_id")]
+            public string ReceivedGiftId { get; set; }
 
             /// <summary>
-            /// Identifier of the message with the gift in the chat with the user
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("message_id")]
-            public long MessageId { get; set; }
-
-            /// <summary>
-            /// Pass true to display the gift on the user's profile page; pass false to remove it from the profile page
+            /// Pass true to display the gift on the user's or the channel's profile page; pass false to remove it from the profile page
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_saved")]
@@ -50,14 +43,14 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Toggles whether a gift is shown on the current user's profile page
+        /// Toggles whether a gift is shown on the current user's or the channel's profile page; requires can_post_messages administrator right in the chat
         /// </summary>
         public static Task<Ok> ToggleGiftIsSavedAsync(
-            this Client client, long senderUserId = default, long messageId = default, bool isSaved = default)
+            this Client client, string receivedGiftId = default, bool isSaved = default)
         {
             return client.ExecuteAsync(new ToggleGiftIsSaved
             {
-                SenderUserId = senderUserId, MessageId = messageId, IsSaved = isSaved
+                ReceivedGiftId = receivedGiftId, IsSaved = isSaved
             });
         }
     }

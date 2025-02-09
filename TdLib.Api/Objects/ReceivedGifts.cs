@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Represents a list of gifts received by a user
+        /// Represents a list of gifts received by a user or a chat
         /// </summary>
-        public partial class UserGifts : Object
+        public partial class ReceivedGifts : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "userGifts";
+            public override string DataType { get; set; } = "receivedGifts";
 
             /// <summary>
             /// Extra data attached to the object
@@ -37,7 +37,14 @@ namespace TdLib
             /// The list of gifts
             /// </summary>
             [JsonProperty("gifts", ItemConverterType = typeof(Converter))]
-            public UserGift[] Gifts { get; set; }
+            public ReceivedGift[] Gifts { get; set; }
+
+            /// <summary>
+            /// True, if notifications about new gifts of the owner are enabled
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("are_notifications_enabled")]
+            public bool AreNotificationsEnabled { get; set; }
 
             /// <summary>
             /// The offset for the next request. If empty, then there are no more results

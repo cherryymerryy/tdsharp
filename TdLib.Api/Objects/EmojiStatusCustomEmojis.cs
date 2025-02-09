@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Contains a list of gifts that can be sent to another user or channel chat
+        /// Contains a list of custom emoji identifiers for emoji statuses
         /// </summary>
-        public partial class Gifts : Object
+        public partial class EmojiStatusCustomEmojis : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "gifts";
+            public override string DataType { get; set; } = "emojiStatusCustomEmojis";
 
             /// <summary>
             /// Extra data attached to the object
@@ -27,10 +27,10 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// The list of gifts
+            /// The list of custom emoji identifiers
             /// </summary>
-            [JsonProperty("gifts", ItemConverterType = typeof(Converter))]
-            public Gift[] Gifts_ { get; set; }
+            [JsonProperty("custom_emoji_ids", ItemConverterType = typeof(Converter))]
+            public long[] CustomEmojiIds { get; set; }
         }
     }
 }

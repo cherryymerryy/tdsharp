@@ -10,7 +10,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Describes an upgraded gift that can be gifted to another user or transferred to TON blockchain as an NFT
+        /// Describes an upgraded gift that can be transferred to another owner or transferred to the TON blockchain as an NFT
         /// </summary>
         public partial class UpgradedGift : Object
         {
@@ -41,6 +41,13 @@ namespace TdLib
             public string Title { get; set; }
 
             /// <summary>
+            /// Unique name of the upgraded gift that can be used with internalLinkTypeUpgradedGift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            /// <summary>
             /// Unique number of the upgraded gift among gifts upgraded from the same gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
@@ -62,11 +69,25 @@ namespace TdLib
             public int MaxUpgradedCount { get; set; }
 
             /// <summary>
-            /// User identifier of the user that owns the upgraded gift; 0 if none
+            /// Identifier of the user or the chat that owns the upgraded gift; may be null if none or unknown
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("owner_user_id")]
-            public long OwnerUserId { get; set; }
+            [JsonProperty("owner_id")]
+            public MessageSender OwnerId { get; set; }
+
+            /// <summary>
+            /// Address of the gift NFT owner in TON blockchain; may be empty if none
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("owner_address")]
+            public string OwnerAddress { get; set; }
+
+            /// <summary>
+            /// Name of the owner for the case when owner identifier and address aren't known
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("owner_name")]
+            public string OwnerName { get; set; }
 
             /// <summary>
             /// Model of the upgraded gift

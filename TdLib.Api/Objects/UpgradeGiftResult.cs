@@ -34,14 +34,21 @@ namespace TdLib
             public UpgradedGift Gift { get; set; }
 
             /// <summary>
-            /// True, if the gift is displayed on the user's profile page
+            /// Unique identifier of the received gift for the current user
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("received_gift_id")]
+            public string ReceivedGiftId { get; set; }
+
+            /// <summary>
+            /// True, if the gift is displayed on the user's or the channel's profile page
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_saved")]
             public bool IsSaved { get; set; }
 
             /// <summary>
-            /// True, if the gift can be transferred to another user
+            /// True, if the gift can be transferred to another owner
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("can_be_transferred")]
@@ -55,7 +62,7 @@ namespace TdLib
             public long TransferStarCount { get; set; }
 
             /// <summary>
-            /// Point in time (Unix timestamp) when the gift can be transferred to TON blockchain as an NFT
+            /// Point in time (Unix timestamp) when the gift can be transferred to the TON blockchain as an NFT
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("export_date")]

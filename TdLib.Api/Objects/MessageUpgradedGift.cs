@@ -12,7 +12,7 @@ namespace TdLib
         public partial class MessageContent : Object
         {
             /// <summary>
-            /// An upgraded gift was received or sent by the current user
+            /// An upgraded gift was received or sent by the current user, or the current user was notified about a channel gift
             /// </summary>
             public class MessageUpgradedGift : MessageContent
             {
@@ -36,6 +36,20 @@ namespace TdLib
                 public UpgradedGift Gift { get; set; }
 
                 /// <summary>
+                /// Sender of the gift; may be null for anonymous gifts
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("sender_id")]
+                public MessageSender SenderId { get; set; }
+
+                /// <summary>
+                /// Unique identifier of the received gift for the current user; only for the receiver of the gift
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("received_gift_id")]
+                public string ReceivedGiftId { get; set; }
+
+                /// <summary>
                 /// True, if the gift was obtained by upgrading of a previously received gift; otherwise, this is a transferred gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
@@ -43,21 +57,21 @@ namespace TdLib
                 public bool IsUpgrade { get; set; }
 
                 /// <summary>
-                /// True, if the gift is displayed on the user's profile page; only for the receiver of the gift
+                /// True, if the gift is displayed on the user's or the channel's profile page; only for the receiver of the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("is_saved")]
                 public bool IsSaved { get; set; }
 
                 /// <summary>
-                /// True, if the gift can be transferred to another user; only for the receiver of the gift
+                /// True, if the gift can be transferred to another owner; only for the receiver of the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("can_be_transferred")]
                 public bool CanBeTransferred { get; set; }
 
                 /// <summary>
-                /// True, if the gift was transferred to another user; only for the receiver of the gift
+                /// True, if the gift was transferred to another owner; only for the receiver of the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("was_transferred")]
@@ -71,7 +85,7 @@ namespace TdLib
                 public long TransferStarCount { get; set; }
 
                 /// <summary>
-                /// Point in time (Unix timestamp) when the gift can be transferred to TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
+                /// Point in time (Unix timestamp) when the gift can be transferred to the TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("export_date")]

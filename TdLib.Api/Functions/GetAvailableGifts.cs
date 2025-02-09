@@ -11,7 +11,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Returns gifts that can be sent to other users
+        /// Returns gifts that can be sent to other users and channel chats
         /// </summary>
         public class GetAvailableGifts : Function<Gifts>
         {
@@ -31,7 +31,7 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Returns gifts that can be sent to other users
+        /// Returns gifts that can be sent to other users and channel chats
         /// </summary>
         public static Task<Gifts> GetAvailableGiftsAsync(
             this Client client)

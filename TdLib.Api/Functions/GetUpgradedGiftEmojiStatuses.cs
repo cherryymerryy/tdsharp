@@ -11,15 +11,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Returns up to 8 emoji statuses, which must be shown in the emoji status list for chats
+        /// Returns available upgraded gift emoji statuses for self status
         /// </summary>
-        public class GetThemedChatEmojiStatuses : Function<EmojiStatusCustomEmojis>
+        public class GetUpgradedGiftEmojiStatuses : Function<EmojiStatuses>
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "getThemedChatEmojiStatuses";
+            public override string DataType { get; set; } = "getUpgradedGiftEmojiStatuses";
 
             /// <summary>
             /// Extra data attached to the function
@@ -31,12 +31,12 @@ namespace TdLib
         }
 
         /// <summary>
-        /// Returns up to 8 emoji statuses, which must be shown in the emoji status list for chats
+        /// Returns available upgraded gift emoji statuses for self status
         /// </summary>
-        public static Task<EmojiStatusCustomEmojis> GetThemedChatEmojiStatusesAsync(
+        public static Task<EmojiStatuses> GetUpgradedGiftEmojiStatusesAsync(
             this Client client)
         {
-            return client.ExecuteAsync(new GetThemedChatEmojiStatuses
+            return client.ExecuteAsync(new GetUpgradedGiftEmojiStatuses
             {
                 
             });

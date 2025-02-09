@@ -29,6 +29,20 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
+                /// Cover of the video; pass null to skip cover uploading
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("cover")]
+                public InputFile Cover { get; set; }
+
+                /// <summary>
+                /// Timestamp from which the video playing must start, in seconds
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("start_timestamp")]
+                public int StartTimestamp { get; set; }
+
+                /// <summary>
                 /// Duration of the video, in seconds
                 /// </summary>
                 [JsonConverter(typeof(Converter))]

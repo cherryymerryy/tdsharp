@@ -11,15 +11,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Sends an upgraded gift to another user or a channel chat
+        /// Returns a URL for upgraded gift withdrawal in the TON blockchain as an NFT; requires owner privileges for gifts owned by a chat
         /// </summary>
-        public class TransferGift : Function<Ok>
+        public class GetUpgradedGiftWithdrawalUrl : Function<HttpUrl>
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "transferGift";
+            public override string DataType { get; set; } = "getUpgradedGiftWithdrawalUrl";
 
             /// <summary>
             /// Extra data attached to the function
@@ -35,29 +35,22 @@ namespace TdLib
             public string ReceivedGiftId { get; set; }
 
             /// <summary>
-            /// Identifier of the user or the channel chat that will receive the gift
+            /// The 2-step verification password of the current user
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("new_owner_id")]
-            public MessageSender NewOwnerId { get; set; }
-
-            /// <summary>
-            /// The amount of Telegram Stars required to pay for the transfer
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("star_count")]
-            public long StarCount { get; set; }
+            [JsonProperty("password")]
+            public string Password { get; set; }
         }
 
         /// <summary>
-        /// Sends an upgraded gift to another user or a channel chat
+        /// Returns a URL for upgraded gift withdrawal in the TON blockchain as an NFT; requires owner privileges for gifts owned by a chat
         /// </summary>
-        public static Task<Ok> TransferGiftAsync(
-            this Client client, string receivedGiftId = default, MessageSender newOwnerId = default, long starCount = default)
+        public static Task<HttpUrl> GetUpgradedGiftWithdrawalUrlAsync(
+            this Client client, string receivedGiftId = default, string password = default)
         {
-            return client.ExecuteAsync(new TransferGift
+            return client.ExecuteAsync(new GetUpgradedGiftWithdrawalUrl
             {
-                ReceivedGiftId = receivedGiftId, NewOwnerId = newOwnerId, StarCount = starCount
+                ReceivedGiftId = receivedGiftId, Password = password
             });
         }
     }

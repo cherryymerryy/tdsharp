@@ -139,7 +139,7 @@ namespace TdLib
             public long PersonalChatId { get; set; }
 
             /// <summary>
-            /// Number of gifts saved to profile by the user
+            /// Number of saved to profile gifts for other users or the total number of received gifts for the current user
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("gift_count")]

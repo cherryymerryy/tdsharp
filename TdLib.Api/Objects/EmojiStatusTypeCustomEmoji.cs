@@ -9,18 +9,18 @@ namespace TdLib
     /// </summary>
     public static partial class TdApi
     {
-        public partial class SentGift : Object
+        public partial class EmojiStatusType : Object
         {
             /// <summary>
-            /// Represents content of a gift received by a user or a channel chat
+            /// Describes type of emoji status
             /// </summary>
-            public class SentGiftRegular : SentGift
+            public class EmojiStatusTypeCustomEmoji : EmojiStatusType
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "sentGiftRegular";
+                public override string DataType { get; set; } = "emojiStatusTypeCustomEmoji";
 
                 /// <summary>
                 /// Extra data attached to the message
@@ -29,11 +29,11 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
-                /// The gift
+                /// Identifier of the custom emoji in stickerFormatTgs format
                 /// </summary>
-                [JsonConverter(typeof(Converter))]
-                [JsonProperty("gift")]
-                public Gift Gift { get; set; }
+                [JsonConverter(typeof(Converter.Int64))]
+                [JsonProperty("custom_emoji_id")]
+                public long CustomEmojiId { get; set; }
             }
         }
     }

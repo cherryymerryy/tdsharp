@@ -11,15 +11,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Returns information about a gift received or sent by the current user
+        /// Returns a list of bots similar to the given bot
         /// </summary>
-        public class GetUserGift : Function<UserGift>
+        public class GetBotSimilarBots : Function<Users>
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "getUserGift";
+            public override string DataType { get; set; } = "getBotSimilarBots";
 
             /// <summary>
             /// Extra data attached to the function
@@ -28,22 +28,22 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the message with the gift
+            /// User identifier of the target bot
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("message_id")]
-            public long MessageId { get; set; }
+            [JsonProperty("bot_user_id")]
+            public long BotUserId { get; set; }
         }
 
         /// <summary>
-        /// Returns information about a gift received or sent by the current user
+        /// Returns a list of bots similar to the given bot
         /// </summary>
-        public static Task<UserGift> GetUserGiftAsync(
-            this Client client, long messageId = default)
+        public static Task<Users> GetBotSimilarBotsAsync(
+            this Client client, long botUserId = default)
         {
-            return client.ExecuteAsync(new GetUserGift
+            return client.ExecuteAsync(new GetBotSimilarBots
             {
-                MessageId = messageId
+                BotUserId = botUserId
             });
         }
     }

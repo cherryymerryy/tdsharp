@@ -10,15 +10,15 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Represents a gift received by a user
+        /// Represents a gift received by a user or a chat
         /// </summary>
-        public partial class UserGift : Object
+        public partial class ReceivedGift : Object
         {
             /// <summary>
             /// Data type for serialization
             /// </summary>
             [JsonProperty("@type")]
-            public override string DataType { get; set; } = "userGift";
+            public override string DataType { get; set; } = "receivedGift";
 
             /// <summary>
             /// Extra data attached to the object
@@ -27,11 +27,18 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the user that sent the gift; 0 if unknown
+            /// Unique identifier of the received gift for the current user; only for the receiver of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("sender_user_id")]
-            public long SenderUserId { get; set; }
+            [JsonProperty("received_gift_id")]
+            public string ReceivedGiftId { get; set; }
+
+            /// <summary>
+            /// Identifier of a user or a chat that sent the gift; may be null if unknown
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("sender_id")]
+            public MessageSender SenderId { get; set; }
 
             /// <summary>
             /// Message added to the gift
@@ -48,7 +55,7 @@ namespace TdLib
             public bool IsPrivate { get; set; }
 
             /// <summary>
-            /// True, if the gift is displayed on the user's profile page; only for the receiver of the gift
+            /// True, if the gift is displayed on the chat's profile page; only for the receiver of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_saved")]
@@ -62,7 +69,7 @@ namespace TdLib
             public bool CanBeUpgraded { get; set; }
 
             /// <summary>
-            /// True, if the gift is an upgraded gift that can be transferred to another user; only for the receiver of the gift
+            /// True, if the gift is an upgraded gift that can be transferred to another owner; only for the receiver of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("can_be_transferred")]
@@ -90,13 +97,6 @@ namespace TdLib
             public SentGift Gift { get; set; }
 
             /// <summary>
-            /// Identifier of the message with the gift in the chat with the sender of the gift; can be 0 or an identifier of a deleted message; only for the receiver of the gift
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("message_id")]
-            public long MessageId { get; set; }
-
-            /// <summary>
             /// Number of Telegram Stars that can be claimed by the receiver instead of the regular gift; 0 if the gift can't be sold by the current user
             /// </summary>
             [JsonConverter(typeof(Converter))]
@@ -118,7 +118,7 @@ namespace TdLib
             public long TransferStarCount { get; set; }
 
             /// <summary>
-            /// Point in time (Unix timestamp) when the upgraded gift can be transferred to TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
+            /// Point in time (Unix timestamp) when the upgraded gift can be transferred to the TON blockchain as an NFT; 0 if NFT export isn't possible; only for the receiver of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("export_date")]

@@ -34,6 +34,20 @@ namespace TdLib
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("video")]
                 public Video Video { get; set; }
+
+                /// <summary>
+                /// Cover of the video; may be null if none
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("cover")]
+                public Photo Cover { get; set; }
+
+                /// <summary>
+                /// Timestamp from which the video playing must start, in seconds
+                /// </summary>
+                [JsonConverter(typeof(Converter))]
+                [JsonProperty("start_timestamp")]
+                public int StartTimestamp { get; set; }
             }
         }
     }

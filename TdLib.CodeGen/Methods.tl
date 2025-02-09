@@ -1,4 +1,4 @@
-﻿//@description Returns the current authorization state; this is an offline request. For informational purposes only. Use updateAuthorizationState instead to maintain the current authorization state. Can be called before initialization
+//@description Returns the current authorization state; this is an offline request. For informational purposes only. Use updateAuthorizationState instead to maintain the current authorization state. Can be called before initialization
 getAuthorizationState = AuthorizationState;
 
 
@@ -287,6 +287,19 @@ getChatSimilarChatCount chat_id:int53 return_local:Bool = Count;
 //@chat_id Identifier of the original chat, which similar chats were requested
 //@opened_chat_id Identifier of the opened chat
 openChatSimilarChat chat_id:int53 opened_chat_id:int53 = Ok;
+
+//@description Returns a list of bots similar to the given bot @bot_user_id User identifier of the target bot
+getBotSimilarBots bot_user_id:int53 = Users;
+
+//@description Returns approximate number of bots similar to the given bot
+//@bot_user_id User identifier of the target bot
+//@return_local Pass true to get the number of bots without sending network requests, or -1 if the number of bots is unknown locally
+getBotSimilarBotCount bot_user_id:int53 return_local:Bool = Count;
+
+//@description Informs TDLib that a bot was opened from the list of similar bots
+//@bot_user_id Identifier of the original bot, which similar bots were requested
+//@opened_bot_user_id Identifier of the opened bot
+openBotSimilarBot bot_user_id:int53 opened_bot_user_id:int53 = Ok;
 
 //@description Returns a list of frequently used chats @category Category of chats to be returned @limit The maximum number of chats to be returned; up to 30
 getTopChats category:TopChatCategory limit:int32 = Chats;
@@ -691,7 +704,7 @@ addLocalMessage chat_id:int53 sender_id:MessageSender reply_to:InputMessageReply
 //@revoke Pass true to delete messages for all chat members. Always true for supergroups, channels and secret chats
 deleteMessages chat_id:int53 message_ids:vector<int53> revoke:Bool = Ok;
 
-//@description Deletes all messages sent by the specified message sender in a chat. Supported only for supergroups; requires can_delete_messages administrator privileges @chat_id Chat identifier @sender_id Identifier of the sender of messages to delete
+//@description Deletes all messages sent by the specified message sender in a chat. Supported only for supergroups; requires can_delete_messages administrator right @chat_id Chat identifier @sender_id Identifier of the sender of messages to delete
 deleteChatMessagesBySender chat_id:int53 sender_id:MessageSender = Ok;
 
 //@description Deletes all messages between the specified dates in a chat. Supported only for private chats and basic groups. Messages sent in the last 30 seconds will not be deleted
@@ -1948,26 +1961,29 @@ toggleBotIsAddedToAttachmentMenu bot_user_id:int53 is_added:Bool allow_write_acc
 
 
 //@description Returns up to 8 emoji statuses, which must be shown right after the default Premium Badge in the emoji status list for self status
-getThemedEmojiStatuses = EmojiStatuses;
+getThemedEmojiStatuses = EmojiStatusCustomEmojis;
 
 //@description Returns recent emoji statuses for self status
 getRecentEmojiStatuses = EmojiStatuses;
 
+//@description Returns available upgraded gift emoji statuses for self status
+getUpgradedGiftEmojiStatuses = EmojiStatuses;
+
 //@description Returns default emoji statuses for self status
-getDefaultEmojiStatuses = EmojiStatuses;
+getDefaultEmojiStatuses = EmojiStatusCustomEmojis;
 
 //@description Clears the list of recently used emoji statuses for self status
 clearRecentEmojiStatuses = Ok;
 
 
 //@description Returns up to 8 emoji statuses, which must be shown in the emoji status list for chats
-getThemedChatEmojiStatuses = EmojiStatuses;
+getThemedChatEmojiStatuses = EmojiStatusCustomEmojis;
 
 //@description Returns default emoji statuses for chats
-getDefaultChatEmojiStatuses = EmojiStatuses;
+getDefaultChatEmojiStatuses = EmojiStatusCustomEmojis;
 
 //@description Returns the list of emoji statuses, which can't be used as chat emoji status, even they are from a sticker set with is_allowed_as_chat_emoji_status == true
-getDisallowedChatEmojiStatuses = EmojiStatuses;
+getDisallowedChatEmojiStatuses = EmojiStatusCustomEmojis;
 
 
 //@description Downloads a file from the cloud. Download progress and completion of the download will be notified through updateFile updates
@@ -3051,52 +3067,67 @@ deleteSavedOrderInfo = Ok;
 deleteSavedCredentials = Ok;
 
 
-//@description Returns gifts that can be sent to other users
+//@description Returns gifts that can be sent to other users and channel chats
 getAvailableGifts = Gifts;
 
-//@description Sends a gift to another user. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
+//@description Sends a gift to another user or channel chat. May return an error with a message "STARGIFT_USAGE_LIMITED" if the gift was sold out
 //@gift_id Identifier of the gift to send
-//@user_id Identifier of the user that will receive the gift
+//@owner_id Identifier of the user or the channel chat that will receive the gift
 //@text Text to show along with the gift; 0-getOption("gift_text_length_max") characters. Only Bold, Italic, Underline, Strikethrough, Spoiler, and CustomEmoji entities are allowed
-//@is_private Pass true to show the current user as sender and gift text only to the gift receiver; otherwise, everyone will be able to see them
+//@is_private Pass true to show gift text and sender only to the gift receiver; otherwise, everyone will be able to see them
 //@pay_for_upgrade Pass true to additionally pay for the gift upgrade and allow the receiver to upgrade it for free
-sendGift gift_id:int64 user_id:int53 text:formattedText is_private:Bool pay_for_upgrade:Bool = Ok;
+sendGift gift_id:int64 owner_id:MessageSender text:formattedText is_private:Bool pay_for_upgrade:Bool = Ok;
 
-//@description Sells a gift received by the current user for Telegram Stars
-//@sender_user_id Identifier of the user that sent the gift
-//@message_id Identifier of the message with the gift in the chat with the user
-sellGift sender_user_id:int53 message_id:int53 = Ok;
+//@description Sells a gift for Telegram Stars @received_gift_id Identifier of the gift
+sellGift received_gift_id:string = Ok;
 
-//@description Toggles whether a gift is shown on the current user's profile page
-//@sender_user_id Identifier of the user that sent the gift
-//@message_id Identifier of the message with the gift in the chat with the user
-//@is_saved Pass true to display the gift on the user's profile page; pass false to remove it from the profile page
-toggleGiftIsSaved sender_user_id:int53 message_id:int53 is_saved:Bool = Ok;
+//@description Toggles whether a gift is shown on the current user's or the channel's profile page; requires can_post_messages administrator right in the chat
+//@received_gift_id Identifier of the gift
+//@is_saved Pass true to display the gift on the user's or the channel's profile page; pass false to remove it from the profile page
+toggleGiftIsSaved received_gift_id:string is_saved:Bool = Ok;
+
+//@description Toggles whether notifications for new gifts received by a channel chat are sent to the current user; requires can_post_messages administrator right in the chat
+//@chat_id Identifier of the channel chat
+//@are_enabled Pass true to enable notifications about new gifts owned by the channel chat; pass false to disable the notifications
+toggleChatGiftNotifications chat_id:int53 are_enabled:Bool = Ok;
 
 //@description Returns examples of possible upgraded gifts for a regular gift @gift_id Identifier of the gift
 getGiftUpgradePreview gift_id:int64 = GiftUpgradePreview;
 
-//@description Upgrades a gift received by the current user. Unless the gift has prepaid_upgrade_star_count > 0, the user must pay gift.upgrade_star_count Telegram Stars for the upgrade
-//@sender_user_id Identifier of the user that sent the gift
-//@message_id Identifier of the message with the gift in the chat with the user
+//@description Upgrades a regular gift
+//@received_gift_id Identifier of the gift
 //@keep_original_details Pass true to keep the original gift text, sender and receiver in the upgraded gift
-upgradeGift sender_user_id:int53 message_id:int53 keep_original_details:Bool = UpgradeGiftResult;
+//@star_count The amount of Telegram Stars required to pay for the upgrade. It the gift has prepaid_upgrade_star_count > 0, then pass 0, otherwise, pass gift.upgrade_star_count
+upgradeGift received_gift_id:string keep_original_details:Bool star_count:int53 = UpgradeGiftResult;
 
-//@description Sends a gift upgraded by the current user to another user
-//@sender_user_id Identifier of the user that sent the gift
-//@message_id Identifier of the message with the upgraded gift in the chat with the user
-//@receiver_user_id Identifier of the user that will receive the gift
-//@star_count The amount of Telegram Stars required for the transfer
-transferGift sender_user_id:int53 message_id:int53 receiver_user_id:int53 star_count:int53 = Ok;
+//@description Sends an upgraded gift to another user or a channel chat
+//@received_gift_id Identifier of the gift
+//@new_owner_id Identifier of the user or the channel chat that will receive the gift
+//@star_count The amount of Telegram Stars required to pay for the transfer
+transferGift received_gift_id:string new_owner_id:MessageSender star_count:int53 = Ok;
 
-//@description Returns gifts saved to profile by the given user
-//@user_id Identifier of the user
+//@description Returns gifts received by the given user or chat
+//@owner_id Identifier of the gift receiver
+//@exclude_unsaved Pass true to exclude gifts that aren't saved to the chat's profile page. Always true for gifts received by other users and channel chats without can_post_messages administrator right
+//@exclude_saved Pass true to exclude gifts that are saved to the chat's profile page; for channel chats with can_post_messages administrator right only
+//@exclude_unlimited Pass true to exclude gifts that can be purchased unlimited number of times; for channel chats with can_post_messages administrator right only
+//@exclude_limited Pass true to exclude gifts that can be purchased limited number of times; for channel chats with can_post_messages administrator right only
+//@exclude_upgraded Pass true to exclude upgraded gifts; for channel chats with can_post_messages administrator right only
+//@sort_by_price Pass true to sort results by gift price instead of send date; for channel chats with can_post_messages administrator right only
 //@offset Offset of the first entry to return as received from the previous request; use empty string to get the first chunk of results
 //@limit The maximum number of gifts to be returned; must be positive and can't be greater than 100. For optimal performance, the number of returned objects is chosen by TDLib and can be smaller than the specified limit
-getUserGifts user_id:int53 offset:string limit:int32 = UserGifts;
+getReceivedGifts owner_id:MessageSender exclude_unsaved:Bool exclude_saved:Bool exclude_unlimited:Bool exclude_limited:Bool exclude_upgraded:Bool sort_by_price:Bool offset:string limit:int32 = ReceivedGifts;
 
-//@description Returns information about a gift received or sent by the current user @message_id Identifier of the message with the gift
-getUserGift message_id:int53 = UserGift;
+//@description Returns information about a received gift @received_gift_id Identifier of the gift
+getReceivedGift received_gift_id:string = ReceivedGift;
+
+//@description Returns information about an upgraded gift by its name @name Unique name of the upgraded gift
+getUpgradedGift name:string = UpgradedGift;
+
+//@description Returns a URL for upgraded gift withdrawal in the TON blockchain as an NFT; requires owner privileges for gifts owned by a chat
+//@received_gift_id Identifier of the gift
+//@password The 2-step verification password of the current user
+getUpgradedGiftWithdrawalUrl received_gift_id:string password:string = HttpUrl;
 
 
 //@description Creates a link for the given invoice; for bots only

@@ -12,7 +12,7 @@ namespace TdLib
         public partial class StarTransactionType : Object
         {
             /// <summary>
-            /// The transaction is a transfer of an upgraded gift to another user; for regular users only
+            /// The transaction is a transfer of an upgraded gift; for regular users only
             /// </summary>
             public class StarTransactionTypeGiftTransfer : StarTransactionType
             {
@@ -29,11 +29,11 @@ namespace TdLib
                 public override string Extra { get; set; }
 
                 /// <summary>
-                /// Identifier of the user that received the gift
+                /// Identifier of the user or the channel that received the gift
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
-                [JsonProperty("user_id")]
-                public long UserId { get; set; }
+                [JsonProperty("owner_id")]
+                public MessageSender OwnerId { get; set; }
 
                 /// <summary>
                 /// The gift

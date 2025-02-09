@@ -34,32 +34,11 @@ namespace TdLib
             public string Name { get; set; }
 
             /// <summary>
-            /// A color in the center of the backdrop in the RGB format
+            /// Colors of the backdrop
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("center_color")]
-            public int CenterColor { get; set; }
-
-            /// <summary>
-            /// A color on the edges of the backdrop in the RGB format
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("edge_color")]
-            public int EdgeColor { get; set; }
-
-            /// <summary>
-            /// A color to be applied for the symbol in the RGB format
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("symbol_color")]
-            public int SymbolColor { get; set; }
-
-            /// <summary>
-            /// A color for the text on the backdrop in the RGB format
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("text_color")]
-            public int TextColor { get; set; }
+            [JsonProperty("colors")]
+            public UpgradedGiftBackdropColors Colors { get; set; }
 
             /// <summary>
             /// The number of upgraded gift that receive this backdrop for each 1000 gifts upgraded

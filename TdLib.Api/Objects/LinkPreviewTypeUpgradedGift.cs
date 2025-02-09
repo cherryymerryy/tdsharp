@@ -9,18 +9,18 @@ namespace TdLib
     /// </summary>
     public static partial class TdApi
     {
-        public partial class SentGift : Object
+        public partial class LinkPreviewType : Object
         {
             /// <summary>
-            /// Represents content of a gift received by a user or a channel chat
+            /// The link is a link to an upgraded gift
             /// </summary>
-            public class SentGiftRegular : SentGift
+            public class LinkPreviewTypeUpgradedGift : LinkPreviewType
             {
                 /// <summary>
                 /// Data type for serialization
                 /// </summary>
                 [JsonProperty("@type")]
-                public override string DataType { get; set; } = "sentGiftRegular";
+                public override string DataType { get; set; } = "linkPreviewTypeUpgradedGift";
 
                 /// <summary>
                 /// Extra data attached to the message
@@ -33,7 +33,7 @@ namespace TdLib
                 /// </summary>
                 [JsonConverter(typeof(Converter))]
                 [JsonProperty("gift")]
-                public Gift Gift { get; set; }
+                public UpgradedGift Gift { get; set; }
             }
         }
     }

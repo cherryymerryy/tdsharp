@@ -153,6 +153,13 @@ namespace TdLib
             public bool CanGetStarRevenueStatistics { get; set; }
 
             /// <summary>
+            /// True, if the user can send a gift to the supergroup or channel using sendGift or transferGift
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("can_send_gift")]
+            public bool CanSendGift { get; set; }
+
+            /// <summary>
             /// True, if aggressive anti-spam checks can be enabled or disabled in the supergroup
             /// </summary>
             [JsonConverter(typeof(Converter))]
@@ -161,7 +168,6 @@ namespace TdLib
 
             /// <summary>
             /// True, if new chat members will have access to old messages. In public, discussion, of forum groups and all channels, old messages are always available,
-            /// so this option affects only private non-forum supergroups without a linked chat. The value of this field is only available to chat administrators
             /// </summary>
             [JsonConverter(typeof(Converter))]
             [JsonProperty("is_all_history_available")]
@@ -194,6 +200,13 @@ namespace TdLib
             [JsonConverter(typeof(Converter))]
             [JsonProperty("has_pinned_stories")]
             public bool HasPinnedStories { get; set; }
+
+            /// <summary>
+            /// Number of saved to profile gifts for channels without can_post_messages administrator right, otherwise, the total number of received gifts
+            /// </summary>
+            [JsonConverter(typeof(Converter))]
+            [JsonProperty("gift_count")]
+            public int GiftCount { get; set; }
 
             /// <summary>
             /// Number of times the current user boosted the supergroup or channel

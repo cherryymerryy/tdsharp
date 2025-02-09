@@ -11,7 +11,7 @@ namespace TdLib
     public static partial class TdApi
     {
         /// <summary>
-        /// Sells a gift received by the current user for Telegram Stars
+        /// Sells a gift for Telegram Stars
         /// </summary>
         public class SellGift : Function<Ok>
         {
@@ -28,29 +28,22 @@ namespace TdLib
             public override string Extra { get; set; }
 
             /// <summary>
-            /// Identifier of the user that sent the gift
+            /// Identifier of the gift
             /// </summary>
             [JsonConverter(typeof(Converter))]
-            [JsonProperty("sender_user_id")]
-            public long SenderUserId { get; set; }
-
-            /// <summary>
-            /// Identifier of the message with the gift in the chat with the user
-            /// </summary>
-            [JsonConverter(typeof(Converter))]
-            [JsonProperty("message_id")]
-            public long MessageId { get; set; }
+            [JsonProperty("received_gift_id")]
+            public string ReceivedGiftId { get; set; }
         }
 
         /// <summary>
-        /// Sells a gift received by the current user for Telegram Stars
+        /// Sells a gift for Telegram Stars
         /// </summary>
         public static Task<Ok> SellGiftAsync(
-            this Client client, long senderUserId = default, long messageId = default)
+            this Client client, string receivedGiftId = default)
         {
             return client.ExecuteAsync(new SellGift
             {
-                SenderUserId = senderUserId, MessageId = messageId
+                ReceivedGiftId = receivedGiftId
             });
         }
     }
